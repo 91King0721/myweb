@@ -5,3 +5,6 @@ Desktop.ini
 # Project
 .DS_Store
 *.log
+
+# Claude Code config
+.claude/
