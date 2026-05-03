@@ -150,7 +150,58 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: transparent;
+  position: relative;
+}
+
+/* 背景图片 & 遮罩 */
+.landing-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('../images/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.landing-page::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.35);  /* 半透明暗色遮罩，确保文字清晰 */
+}
+
+/* 手机切换背景 */
+@media (max-width: 768px) {
+  .landing-page::before {
+    background-image: url('../images/phonebg.jpg');
+  }
+  .landing-page::after {
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* 首页导航栏透明化，让背景图透出来 */
+.landing-page .nav {
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: saturate(120%) blur(16px);
+  -webkit-backdrop-filter: saturate(120%) blur(16px);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.landing-page .nav-title {
+  color: #ffffff;
+}
+
+.landing-page .nav-links a {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.landing-page .nav-links a:hover {
+  color: #ffffff;
 }
 
 .landing-main {
@@ -168,12 +219,14 @@ body {
   display: inline-block;
   font-size: 12px;
   font-weight: 500;
-  color: var(--color-accent);
-  background: rgba(0, 113, 227, 0.08);
-  padding: 4px 14px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 16px;
   border-radius: var(--radius-pill);
   margin-bottom: 24px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
 }
 
 .landing-title {
@@ -181,8 +234,9 @@ body {
   font-weight: 700;
   line-height: 1.08349;
   letter-spacing: -0.003em;
-  color: var(--color-text-primary);
+  color: #ffffff;
   margin-bottom: 12px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
 }
 
 .landing-subtitle {
@@ -190,9 +244,10 @@ body {
   font-weight: 400;
   line-height: 1.36364;
   letter-spacing: 0.011em;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 40px;
   max-width: 520px;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.1);
 }
 
 .landing-actions {
@@ -265,7 +320,7 @@ body {
   text-align: center;
   padding: 24px;
   font-size: 12px;
-  color: var(--color-text-tertiary);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* ============================================
@@ -811,7 +866,7 @@ tr:hover td.occ {
   }
 
   .landing-page {
-    background: #1c1c1e;
+    background: transparent;
   }
 
   .day-block {
