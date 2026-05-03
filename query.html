@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>查询空闲教室 - 整学期空闲教室查询</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- Apple 风格导航栏 -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        返回首页
+      </a>
+      <span class="nav-title">空闲教室查询</span>
+      <ul class="nav-links">
+        <li style="display:none"><a href="#">个人主页</a></li>
+        <li><a href="index.html">首页</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1 class="page-title">教室课表</h1>
+      <p class="page-subtitle">第 1 ~ 18 周 · 选择周次和教学楼查看</p>
+    </div>
+
+    <!-- 图例 -->
+    <div class="legend">
+      <span class="legend-item">
+        <span class="legend-dot free"></span>
+        空闲
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot occ"></span>
+        有课
+      </span>
+    </div>
+
+    <!-- 控制栏 -->
+    <div class="controls">
+      <select id="weekSel" onchange="render()">
+        <option value="1">第 1 周</option>
+        <option value="2">第 2 周</option>
+        <option value="3">第 3 周</option>
+        <option value="4">第 4 周</option>
+        <option value="5">第 5 周</option>
+        <option value="6">第 6 周</option>
+        <option value="7">第 7 周</option>
+        <option value="8">第 8 周</option>
+        <option value="9">第 9 周</option>
+        <option value="10">第 10 周</option>
+        <option value="11">第 11 周</option>
+        <option value="12">第 12 周</option>
+        <option value="13">第 13 周</option>
+        <option value="14">第 14 周</option>
+        <option value="15">第 15 周</option>
+        <option value="16">第 16 周</option>
+        <option value="17">第 17 周</option>
+        <option value="18">第 18 周</option>
+      </select>
+
+      <select id="bldSel" onchange="render()">
+        <option value="一教">一教</option>
+        <option value="二教">二教</option>
+        <option value="三教">三教</option>
+        <option value="东区主楼">东区主楼</option>
+      </select>
+
+      <input id="searchInput" type="text" inputmode="search" placeholder="搜教室编号..." autocomplete="off" oninput="render()">
+    </div>
+
+    <!-- 结果容器 -->
+    <div id="results"></div>
+  </main>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
