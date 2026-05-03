@@ -1,0 +1,7 @@
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Project
+.DS_Store
+*.log
