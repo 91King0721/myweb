@@ -73,7 +73,55 @@
         <option value="东区主楼">东区主楼</option>
       </select>
 
+      <select id="periodSel" onchange="onPeriodChange()">
+        <option value="all">全部时段</option>
+        <option value="1-4">1-4节(上午)</option>
+        <option value="5-8">5-8节(下午)</option>
+        <option value="9-12">9-12节(晚上)</option>
+        <option value="custom">自定义时段</option>
+      </select>
+
       <input id="searchInput" type="text" inputmode="search" placeholder="搜教室编号..." autocomplete="off" oninput="render()">
+
+      <button type="button" id="favToggle" class="fav-toggle" onclick="toggleFavFilter()" title="筛选收藏">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/>
+        </svg>
+        收藏
+      </button>
+    </div>
+
+    <!-- 自定义时段范围 -->
+    <div id="customRange" class="custom-range-bar" style="display:none">
+      <span class="custom-range-label">时段范围</span>
+      <select id="periodStart" class="period-range" onchange="render()">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+      </select>
+      <span class="period-range-sep">至</span>
+      <select id="periodEnd" class="period-range" onchange="render()">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12" selected>12</option>
+      </select>
+      <span class="period-range-unit">节</span>
     </div>
 
     <!-- 结果容器 -->
