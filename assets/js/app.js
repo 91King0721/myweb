@@ -189,7 +189,7 @@ function render() {
       for (var k = 0; k < activePeriods.length; k++) {
         var periodIdx = activePeriods[k] - 1;
         var cls = r.periods[periodIdx] ? 'occ' : 'free';
-        html += '<td class="' + cls + '">' + (r.periods[periodIdx] ? '—' : '○') + '</td>';
+        html += '<td class="' + cls + '"><span class="' + cls + '-mark"></span></td>';
       }
       html += '</tr>';
     }
