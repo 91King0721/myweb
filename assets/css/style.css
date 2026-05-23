@@ -1,5 +1,5 @@
 /* ============================================
-   空闲教室查询系统 - 终末地工业风格 (Endfield Industrial UI)
+   空闲教室查询系统 - 现代工业风格 (Modern Industrial UI)
    Spec: 硬核重工业 × 近未来科幻 × 粗野主义
    ============================================ */
 
@@ -50,6 +50,112 @@ body {
     radial-gradient(circle at 1px 1px, #1a1a1a 1px, transparent 0);
   background-size: 40px 40px;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.page-transition-layer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(24vw, 280px);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(110vw, 0, 0) skewX(-8deg);
+  background:
+    linear-gradient(90deg, rgba(4, 5, 6, 0.04), rgba(255, 51, 68, 0.08) 42%, rgba(0, 136, 255, 0.03)),
+    linear-gradient(90deg, transparent 0 44px, rgba(255, 255, 255, 0.18) 44px 45px, transparent 45px 92px),
+    linear-gradient(90deg, transparent 0 112px, rgba(255, 204, 0, 0.22) 112px 113px, transparent 113px 160px),
+    linear-gradient(90deg, transparent 0 184px, rgba(255, 51, 68, 0.18) 184px 185px, transparent 185px);
+  will-change: transform, opacity;
+}
+
+.page-transition-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 34px;
+  mix-blend-mode: screen;
+  opacity: 0.48;
+}
+
+.page-transition-layer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #ffcc00;
+  box-shadow:
+    0 0 20px rgba(255, 204, 0, 0.76),
+    8px 0 0 rgba(255, 255, 255, 0.12),
+    18px 0 0 rgba(255, 51, 68, 0.16);
+}
+
+body.enter-forward .page-transition-layer {
+  --scan-start: 112vw;
+  --scan-end: -36vw;
+  animation: scanTravel 0.46s cubic-bezier(0.72, 0, 0.2, 1) both;
+}
+
+body.enter-forward .page-transition-layer::after {
+  left: 0;
+}
+
+body.enter-back .page-transition-layer {
+  --scan-start: -36vw;
+  --scan-end: 112vw;
+  animation: scanTravel 0.46s cubic-bezier(0.72, 0, 0.2, 1) both;
+}
+
+body.enter-back .page-transition-layer::after {
+  right: 0;
+}
+
+body.is-entering.enter-forward .nav,
+body.is-entering.enter-forward main,
+body.is-entering.enter-forward .landing-footer {
+  animation: pageEnterForward 0.46s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+body.is-entering.enter-back .nav,
+body.is-entering.enter-back main,
+body.is-entering.enter-back .landing-footer {
+  animation: pageEnterBack 0.46s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+body.is-entering .nav,
+body.is-entering main,
+body.is-entering .landing-footer,
+body.is-leaving .nav,
+body.is-leaving main,
+body.is-leaving .landing-footer {
+  will-change: transform, opacity;
+}
+
+body.is-leaving .nav,
+body.is-leaving main,
+body.is-leaving .landing-footer {
+  opacity: 0.82;
+  transition:
+    opacity 0.11s cubic-bezier(0.2, 1, 0.3, 1),
+    transform 0.11s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+body.is-leaving.leave-forward .nav,
+body.is-leaving.leave-forward main,
+body.is-leaving.leave-forward .landing-footer {
+  transform: translateX(-26px);
+}
+
+body.is-leaving.leave-back .nav,
+body.is-leaving.leave-back main,
+body.is-leaving.leave-back .landing-footer {
+  transform: translateX(26px);
 }
 
 /* ============================================
@@ -243,22 +349,22 @@ body {
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(135deg, rgba(0, 136, 255, 0.15) 0%, transparent 50%),
-    linear-gradient(225deg, rgba(255, 204, 0, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 30% 50%, rgba(0, 0, 0, 0.6) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 50%, rgba(0, 0, 0, 0.4) 0%, transparent 60%),
-    url('../images/background.jpg') center center / cover no-repeat;
+    linear-gradient(90deg, rgba(4, 5, 6, 0.92) 0%, rgba(6, 7, 8, 0.72) 32%, rgba(6, 7, 8, 0.24) 66%, rgba(5, 5, 6, 0.24) 100%),
+    linear-gradient(135deg, rgba(0, 136, 255, 0.16) 0%, transparent 44%),
+    linear-gradient(225deg, rgba(255, 204, 0, 0.12) 0%, transparent 54%),
+    radial-gradient(ellipse at 24% 52%, rgba(0, 0, 0, 0.72) 0%, transparent 58%),
+    url('../images/industrial-desktop.png') center center / cover no-repeat;
 }
 
 /* Mobile background */
 @media (max-width: 768px) {
   .landing-page::before {
     background:
-      linear-gradient(135deg, rgba(0, 136, 255, 0.15) 0%, transparent 50%),
-      linear-gradient(225deg, rgba(255, 204, 0, 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 30% 50%, rgba(0, 0, 0, 0.6) 0%, transparent 60%),
-      radial-gradient(ellipse at 70% 50%, rgba(0, 0, 0, 0.4) 0%, transparent 60%),
-      url('../images/phonebg.jpg') center center / cover no-repeat;
+      linear-gradient(180deg, rgba(7, 8, 9, 0.3) 0%, rgba(5, 5, 6, 0.74) 46%, rgba(4, 4, 5, 0.94) 100%),
+      linear-gradient(90deg, rgba(6, 6, 7, 0.84) 0%, rgba(6, 6, 7, 0.18) 72%),
+      linear-gradient(135deg, rgba(0, 136, 255, 0.12) 0%, transparent 46%),
+      linear-gradient(225deg, rgba(255, 51, 68, 0.14) 0%, transparent 54%),
+      url('../images/industrial-mobile.png') center center / cover no-repeat;
   }
 }
 
@@ -269,9 +375,11 @@ body {
   z-index: -1;
   pointer-events: none;
   background-image:
+    linear-gradient(115deg, transparent 0 47%, rgba(255, 51, 68, 0.16) 47.2%, transparent 47.8%),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 80px 80px;
+  background-size: 320px 320px, 80px 80px, 80px 80px;
+  animation: backgroundDrift 16s linear infinite;
 }
 
 /* Landing nav transparent */
@@ -474,6 +582,17 @@ body {
    Query Page
    ============================================ */
 
+.query-page {
+  background-image:
+    linear-gradient(90deg, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.82)),
+    linear-gradient(180deg, rgba(255, 51, 68, 0.08), transparent 36%),
+    url('../images/industrial-desktop.png'),
+    radial-gradient(circle at 1px 1px, #1a1a1a 1px, transparent 0);
+  background-size: cover, cover, cover, 40px 40px;
+  background-position: center, center, center top, 0 0;
+  background-attachment: fixed, fixed, fixed, scroll;
+}
+
 /* --- Page Header --- */
 .page-header {
   margin-bottom: 24px;
@@ -608,6 +727,30 @@ body {
   box-shadow: 0 0 0 1px rgba(255, 204, 0, 0.15);
 }
 
+#results {
+  position: relative;
+  min-height: 120px;
+}
+
+#results::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 2px;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 204, 0, 0.9), rgba(0, 136, 255, 0.7), transparent);
+  box-shadow: 0 0 22px rgba(255, 204, 0, 0.34);
+}
+
+#results.results-updating::before {
+  animation: resultsScan 0.46s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
 /* --- Industrial Day Block (Chamfered Panel) --- */
 .day-block {
   background: var(--ef-surface);
@@ -623,6 +766,8 @@ body {
     calc(100% - 10px) 100%,
     0 100%
   );
+  animation: dayMaterialize 0.42s cubic-bezier(0.2, 1, 0.3, 1) both;
+  animation-delay: calc(var(--block-index, 0) * 35ms);
 }
 
 .day-block::before {
@@ -701,6 +846,7 @@ body {
 
 .day-body {
   padding-top: 14px;
+  animation: dataReveal 0.22s cubic-bezier(0.2, 1, 0.3, 1) both;
 }
 
 .day-title {
@@ -1123,6 +1269,16 @@ tr.fav-row:hover td.room-name {
 
 /* Tablet portrait & large phone landscape */
 @media (max-width: 768px) {
+  .query-page {
+    background-image:
+      linear-gradient(90deg, rgba(10, 10, 10, 0.94), rgba(10, 10, 10, 0.82)),
+      linear-gradient(180deg, rgba(255, 51, 68, 0.1), transparent 40%),
+      url('../images/industrial-mobile.png'),
+      radial-gradient(circle at 1px 1px, #1a1a1a 1px, transparent 0);
+    background-size: cover, cover, cover, 40px 40px;
+    background-position: center, center, center top, 0 0;
+  }
+
   .nav-links a,
   .nav-back {
     padding: 10px 8px;
@@ -1464,6 +1620,92 @@ tr.fav-row:hover td.room-name {
    Animations
    ============================================ */
 
+@keyframes scanTravel {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--scan-start), 0, 0) skewX(-8deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  76% {
+    opacity: 0.88;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--scan-end), 0, 0) skewX(-8deg);
+  }
+}
+
+@keyframes pageEnterForward {
+  from {
+    opacity: 0.78;
+    transform: translateX(46px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pageEnterBack {
+  from {
+    opacity: 0.78;
+    transform: translateX(-46px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes backgroundDrift {
+  from {
+    background-position: 0 0, 0 0, 0 0;
+  }
+  to {
+    background-position: 320px 0, 80px 0, 0 80px;
+  }
+}
+
+@keyframes resultsScan {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scaleX(0.16);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(120px) scaleX(1);
+  }
+}
+
+@keyframes dayMaterialize {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: brightness(1.32) saturate(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: brightness(1) saturate(1);
+  }
+}
+
+@keyframes dataReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Fade in up (for landing page) */
 @keyframes fadeInUp {
   from {
@@ -1522,6 +1764,31 @@ tr.fav-row:hover td.room-name {
     opacity: 1;
   }
 
+  .grid-lines,
+  .day-block,
+  .day-body,
+  #results.results-updating::before {
+    animation: none;
+  }
+
+  .page-transition-layer {
+    display: none;
+  }
+
+  body.is-entering .nav,
+  body.is-entering main,
+  body.is-entering .landing-footer {
+    animation: none;
+  }
+
+  body.is-leaving .nav,
+  body.is-leaving main,
+  body.is-leaving .landing-footer {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
   .landing-subtitle.typing {
     animation: none;
     border-right: none;
@@ -1560,4 +1827,817 @@ tr.fav-row:hover td.room-name {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ef-border-hover);
+}
+
+/* ============================================
+   Modern Industrial-Inspired Skin
+   ============================================ */
+:root {
+  --ef-bg: #f4f5ef;
+  --ef-surface: #ffffff;
+  --ef-surface-raised: #f7f8f2;
+  --ef-accent: #dfff35;
+  --ef-accent-blue: #111111;
+  --ef-accent-red: #e33d3d;
+  --ef-border: #d4d8cf;
+  --ef-border-hover: #171717;
+  --ef-text-main: #111111;
+  --ef-text-secondary: #5f625f;
+  --ef-text-tertiary: #a4aaa2;
+  --nav-height: 68px;
+}
+
+body {
+  background-color: var(--ef-bg);
+  color: var(--ef-text-main);
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+  background-size: 86px 86px;
+}
+
+.nav {
+  top: 0;
+  right: auto;
+  bottom: 0;
+  width: 68px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.96);
+  border-right: 1px solid #d7d9d2;
+  border-bottom: none;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.nav::before {
+  display: none;
+}
+
+.nav-inner {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.nav-title {
+  min-height: 68px;
+  padding: 10px 6px;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  color: #111111;
+  border-bottom: 1px solid #d7d9d2;
+  font-size: 9px;
+  line-height: 1.08;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-align: center;
+  word-break: break-all;
+}
+
+.nav-title::first-line {
+  font-size: 13px;
+}
+
+.nav-links {
+  width: 100%;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 52px;
+}
+
+.nav-links a,
+.nav-back {
+  width: 100%;
+  min-height: 54px;
+  justify-content: center;
+  padding: 7px 4px;
+  border: none;
+  border-left: 6px solid transparent;
+  color: #b5b9b2;
+  background: transparent;
+  font-size: 0;
+}
+
+.nav-links a::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: block;
+  background:
+    linear-gradient(#b5b9b2 0 0) center 5px / 20px 3px no-repeat,
+    linear-gradient(#b5b9b2 0 0) center / 20px 3px no-repeat,
+    linear-gradient(#b5b9b2 0 0) center 16px / 20px 3px no-repeat;
+}
+
+.nav-back {
+  order: 2;
+  margin-top: 52px;
+}
+
+.nav-back svg {
+  width: 24px;
+  height: 24px;
+  color: #b5b9b2;
+}
+
+.nav-links a:hover,
+.nav-back:hover {
+  color: #111111;
+  background: #f0f2ea;
+  border-left-color: #111111;
+}
+
+.nav-links a:hover::before {
+  background:
+    linear-gradient(#111 0 0) center 5px / 20px 3px no-repeat,
+    linear-gradient(#111 0 0) center / 20px 3px no-repeat,
+    linear-gradient(#111 0 0) center 16px / 20px 3px no-repeat;
+}
+
+.nav-links a::after,
+.nav-back::after {
+  display: none;
+}
+
+.main {
+  max-width: none;
+  margin-left: 68px;
+  padding: 84px clamp(28px, 5vw, 78px) 88px;
+}
+
+.landing-page {
+  background: #f7f8f3;
+}
+
+.landing-page::before {
+  z-index: 0;
+  opacity: 1;
+  background:
+    linear-gradient(180deg, rgba(247, 248, 243, 0) 0%, rgba(247, 248, 243, 0.18) 50%, #f7f8f3 78%, #f7f8f3 100%),
+    linear-gradient(90deg, rgba(247, 248, 243, 0.88) 0%, rgba(247, 248, 243, 0.5) 31%, rgba(247, 248, 243, 0.08) 62%, rgba(247, 248, 243, 0.18) 100%),
+    linear-gradient(90deg, rgba(223, 255, 53, 0.34) 0 10%, transparent 10% 100%),
+    url('../images/industrial-desktop.png') right center / cover no-repeat;
+}
+
+.landing-page::after {
+  content: '';
+  position: fixed;
+  inset: 0 0 0 68px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 24% 58%, rgba(223, 255, 53, 0.36), transparent 15%),
+    linear-gradient(90deg, transparent 0 7%, rgba(0, 0, 0, 0.08) 7.1% 7.2%, transparent 7.3%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: auto, auto, 98px 98px, 98px 98px;
+  mix-blend-mode: multiply;
+}
+
+.landing-page .grid-lines {
+  z-index: 0;
+  left: 68px;
+  background-image:
+    linear-gradient(110deg, transparent 0 42%, rgba(223, 255, 53, 0.46) 42% 42.8%, transparent 43%),
+    radial-gradient(circle, rgba(0, 0, 0, 0.12) 1px, transparent 1px);
+  background-size: 420px 420px, 18px 18px;
+  opacity: 0.48;
+}
+
+.landing-page .nav {
+  background: rgba(255, 255, 255, 0.96);
+  border-right-color: #d7d9d2;
+}
+
+.landing-page .nav-title,
+.landing-page .nav-links a {
+  color: #111111;
+}
+
+.landing-main {
+  min-height: 100vh;
+  padding: 88px clamp(28px, 10vw, 150px) 150px;
+  margin: 0 0 0 68px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  text-align: left;
+}
+
+.landing-label {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 12px;
+  padding-left: 28px;
+  font-family: var(--ef-font-mono);
+  font-size: 12px;
+  color: #111111;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.landing-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  background: var(--ef-accent);
+  clip-path: polygon(0 0, 100% 0, 100% 76%, 76% 100%, 0 100%);
+}
+
+.landing-title {
+  color: #0a0a0a;
+  font-size: clamp(56px, 8vw, 120px);
+  line-height: 0.88;
+  letter-spacing: -0.06em;
+  font-weight: 950;
+  text-shadow:
+    0 1px 0 #ffffff,
+    12px 12px 0 rgba(223, 255, 53, 0.52);
+}
+
+.landing-title::before {
+  display: none;
+}
+
+.landing-subtitle {
+  max-width: 620px;
+  color: #272927;
+  margin-top: 18px;
+  margin-bottom: 34px;
+  padding: 10px 0 10px 18px;
+  border-left: 5px solid #111111;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0));
+  font-size: 13px;
+}
+
+.landing-actions {
+  position: relative;
+  z-index: 3;
+}
+
+.btn-cta {
+  min-width: 280px;
+  min-height: 54px;
+  padding-left: 68px;
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid #111111;
+  clip-path: none;
+  box-shadow:
+    inset 8px 0 0 var(--ef-accent),
+    0 18px 0 rgba(0, 0, 0, 0.08);
+}
+
+.btn-cta::before {
+  top: 10px;
+  left: 19px;
+  width: 22px;
+  height: calc(100% - 20px);
+  border: none;
+  background:
+    linear-gradient(135deg, transparent 0 43%, #111111 44% 52%, transparent 53%),
+    linear-gradient(var(--ef-accent), var(--ef-accent));
+  box-shadow:
+    -8px 0 0 var(--ef-accent),
+    8px 0 0 rgba(223, 255, 53, 0.12);
+}
+
+.btn-cta::after {
+  content: 'DOWNLOAD';
+  right: -92px;
+  bottom: auto;
+  top: 50%;
+  width: auto;
+  height: auto;
+  transform: translateY(-50%);
+  border: none;
+  color: #111111;
+  font-family: var(--ef-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.btn-cta:hover {
+  background: var(--ef-accent);
+  color: #111111;
+  letter-spacing: 0.16em;
+  box-shadow:
+    inset 8px 0 0 #111111,
+    0 22px 0 rgba(0, 0, 0, 0.08);
+}
+
+.btn-cta:hover::before {
+  background:
+    linear-gradient(135deg, transparent 0 43%, var(--ef-accent) 44% 52%, transparent 53%),
+    linear-gradient(#111111, #111111);
+  box-shadow:
+    -10px 0 0 #111111,
+    8px 0 0 rgba(17, 17, 17, 0.12);
+}
+
+.landing-download-panel {
+  position: fixed;
+  right: 28px;
+  bottom: 36px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(111, 111, 108, 0.88);
+  color: #ffffff;
+  font-family: var(--ef-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
+.landing-download-panel span {
+  min-width: 132px;
+  padding: 10px 14px;
+  background: #0f0f0f;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.landing-download-panel .panel-flag {
+  background: var(--ef-accent);
+  color: #111111;
+  font-weight: 900;
+}
+
+.landing-footer {
+  left: 68px;
+  color: rgba(0, 0, 0, 0.52);
+}
+
+.query-page {
+  background:
+    linear-gradient(90deg, rgba(244, 245, 239, 0.96), rgba(244, 245, 239, 0.86)),
+    linear-gradient(90deg, rgba(223, 255, 53, 0.26) 0 18%, transparent 18%),
+    url('../images/industrial-desktop.png') right top / 62vw auto no-repeat,
+    #f4f5ef;
+  color: #111111;
+}
+
+.query-page::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 0 68px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.14) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px, 12px 12px;
+}
+
+.query-band {
+  margin: -34px 0 26px;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 clamp(18px, 4vw, 48px);
+  background:
+    linear-gradient(90deg, var(--ef-accent), #f2ff8e 72%, rgba(244, 245, 239, 0.35));
+  border-bottom: 5px solid #111111;
+  font-family: var(--ef-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.query-band strong {
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.page-header {
+  max-width: 780px;
+  margin-bottom: 22px;
+  padding: 18px 24px 20px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #cfd4ca;
+  border-left: 10px solid #111111;
+}
+
+.page-header::after {
+  width: 180px;
+  height: 5px;
+  background: var(--ef-accent);
+  bottom: -5px;
+}
+
+.page-title {
+  color: #111111;
+  font-size: clamp(30px, 4vw, 54px);
+  line-height: 0.96;
+  font-weight: 950;
+  letter-spacing: -0.06em;
+}
+
+.page-title::before {
+  content: '↘ INFORMATION';
+  color: #111111;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  color: #4e524c;
+}
+
+.legend {
+  color: #111111;
+}
+
+.legend-dot.free {
+  background: #77d96a;
+}
+
+.legend-dot.occ {
+  background: #e34d57;
+}
+
+.controls {
+  padding: 14px;
+  background: rgba(17, 17, 17, 0.94);
+  border-left: 12px solid var(--ef-accent);
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.08);
+}
+
+.controls select,
+.controls input[type="text"],
+.fav-toggle,
+.period-range {
+  background-color: #ffffff;
+  color: #111111;
+  border-color: #ffffff;
+  border-radius: 2px;
+  text-transform: none;
+}
+
+.controls select:hover,
+.controls input[type="text"]:hover,
+.fav-toggle:hover {
+  background-color: var(--ef-accent);
+  border-color: var(--ef-accent);
+}
+
+.controls select:focus,
+.controls input[type="text"]:focus,
+.period-range:focus {
+  border-color: var(--ef-accent);
+  box-shadow: 0 0 0 2px rgba(223, 255, 53, 0.55);
+}
+
+.fav-toggle.active {
+  background: var(--ef-accent);
+  color: #111111;
+  border-color: var(--ef-accent);
+}
+
+.custom-range-bar {
+  background: #ffffff;
+  border: 1px solid #cfd4ca;
+  clip-path: none;
+}
+
+.custom-range-label,
+.period-range-sep,
+.period-range-unit {
+  color: #111111;
+}
+
+#results::before {
+  background: linear-gradient(90deg, transparent, #111111, var(--ef-accent), transparent);
+}
+
+.day-block {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #cfd4ca;
+  border-left: 10px solid #111111;
+  clip-path: none;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.055);
+}
+
+.day-block::before {
+  top: -1px;
+  left: -10px;
+  width: 10px;
+  height: 44px;
+  border: none;
+  background: var(--ef-accent);
+  opacity: 1;
+}
+
+.day-block::after {
+  display: none;
+}
+
+.day-block:hover {
+  background: #ffffff;
+  border-color: #111111;
+}
+
+.day-title,
+.free-num {
+  color: #111111;
+}
+
+.day-date,
+.free-info,
+.free-total,
+.free-sep {
+  color: #6b7069;
+}
+
+.table-wrap {
+  border-color: #cfd4ca;
+  background: #ffffff;
+}
+
+table {
+  color: #111111;
+}
+
+th {
+  background: #111111;
+  color: #ffffff;
+  border-bottom-color: #111111;
+}
+
+th.room-name,
+td.room-name {
+  background: #f2f4ed;
+  color: #111111;
+  border-right-color: #cfd4ca;
+}
+
+th.seat-th,
+td.seat-td {
+  color: #777c74;
+  border-right-color: #cfd4ca;
+}
+
+th.period {
+  color: #ffffff;
+}
+
+.period-time {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+td {
+  border-bottom-color: #e5e8df;
+}
+
+td.free {
+  background: rgba(119, 217, 106, 0.22);
+}
+
+td.occ {
+  background: rgba(227, 77, 87, 0.22);
+}
+
+tr:hover td.free {
+  background: rgba(119, 217, 106, 0.36);
+}
+
+tr:hover td.occ {
+  background: rgba(227, 77, 87, 0.36);
+}
+
+.free-mark {
+  border-color: rgba(17, 17, 17, 0.38);
+}
+
+.occ-mark {
+  background: #e34d57;
+}
+
+.fav-star,
+.fav-toggle {
+  color: #111111;
+}
+
+.fav-star.filled,
+.fav-star:hover {
+  color: #111111;
+  filter: drop-shadow(0 0 5px rgba(223, 255, 53, 0.85));
+}
+
+tr.fav-row td,
+tr.fav-row td.room-name {
+  background: rgba(223, 255, 53, 0.18);
+}
+
+.empty-msg {
+  color: #111111;
+  background: #ffffff;
+  border-color: #cfd4ca;
+}
+
+.page-transition-layer {
+  background:
+    linear-gradient(90deg, rgba(223, 255, 53, 0.04), rgba(223, 255, 53, 0.11) 42%, rgba(17, 17, 17, 0.03)),
+    linear-gradient(90deg, transparent 0 44px, rgba(17, 17, 17, 0.16) 44px 45px, transparent 45px 92px),
+    linear-gradient(90deg, transparent 0 112px, rgba(223, 255, 53, 0.32) 112px 113px, transparent 113px 160px);
+}
+
+.page-transition-layer::after {
+  background: #111111;
+  box-shadow:
+    0 0 0 1px rgba(223, 255, 53, 0.75),
+    9px 0 0 rgba(223, 255, 53, 0.34),
+    18px 0 0 rgba(17, 17, 17, 0.1);
+}
+
+@media (max-width: 768px) {
+  .nav {
+    right: 0;
+    bottom: auto;
+    width: 100%;
+    height: 58px;
+    border-right: none;
+    border-bottom: 1px solid #d7d9d2;
+  }
+
+  .nav-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+  }
+
+  .nav-title {
+    min-height: 0;
+    height: 58px;
+    max-width: 118px;
+    padding: 4px 0;
+    border-bottom: none;
+    font-size: 9px;
+    justify-items: start;
+  }
+
+  .nav-links {
+    width: auto;
+    flex-direction: row;
+    margin-top: 0;
+  }
+
+  .nav-links a,
+  .nav-back {
+    min-height: 44px;
+    width: 46px;
+    border-left: none;
+  }
+
+  .nav-back {
+    order: 0;
+    margin-top: 0;
+  }
+
+  .landing-page::before {
+    background:
+      linear-gradient(180deg, rgba(247, 248, 243, 0) 0%, #f7f8f3 72%, #f7f8f3 100%),
+      linear-gradient(90deg, rgba(247, 248, 243, 0.34), rgba(247, 248, 243, 0.04)),
+      url('../images/industrial-mobile.png') center top / cover no-repeat;
+  }
+
+  .landing-page::after,
+  .landing-page .grid-lines {
+    left: 0;
+  }
+
+  .landing-main {
+    min-height: 100vh;
+    margin-left: 0;
+    padding: 58vh 24px 42px;
+    justify-content: flex-start;
+  }
+
+  .landing-title {
+    font-size: clamp(46px, 16vw, 68px);
+    text-shadow: 7px 7px 0 rgba(223, 255, 53, 0.55);
+  }
+
+  .landing-subtitle {
+    font-size: 11px;
+    margin-bottom: 22px;
+  }
+
+  .btn-cta {
+    min-width: 230px;
+    width: 100%;
+    max-width: 360px;
+    padding-left: 58px;
+  }
+
+  .btn-cta::after {
+    display: none;
+  }
+
+  .landing-download-panel {
+    position: relative;
+    right: auto;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: 360px;
+    margin-top: 14px;
+    align-self: flex-start;
+    grid-template-columns: 1fr 1fr;
+    font-size: 9px;
+    padding: 8px;
+    background: rgba(111, 111, 108, 0.74);
+  }
+
+  .landing-download-panel span {
+    min-width: 0;
+    padding: 8px 6px;
+  }
+
+  .landing-footer {
+    left: 0;
+    padding-bottom: 8px;
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 78px 16px 70px;
+  }
+
+  .query-page {
+    background:
+      linear-gradient(180deg, rgba(244, 245, 239, 0.94), rgba(244, 245, 239, 0.88)),
+      url('../images/industrial-mobile.png') center top / 100% auto no-repeat,
+      #f4f5ef;
+  }
+
+  .query-page::before {
+    inset: 58px 0 0;
+  }
+
+  .query-band {
+    margin-top: -18px;
+    min-height: 58px;
+    padding: 0 14px;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .query-band strong {
+    font-size: 20px;
+  }
+
+  .query-band span {
+    font-size: 9px;
+  }
+
+  .page-header {
+    padding: 15px 14px 18px;
+    border-left-width: 7px;
+  }
+
+  .controls {
+    padding: 10px;
+    border-left-width: 8px;
+  }
+
+  .day-block {
+    border-left-width: 7px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-main {
+    padding-top: 52vh;
+  }
+
+  .landing-label {
+    font-size: 10px;
+  }
+
+  .landing-title {
+    line-height: 0.94;
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
 }

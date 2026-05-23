@@ -90,6 +90,16 @@ function getCurrentDayName() {
   return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][idx];
 }
 
+function flashResultsRefresh(container) {
+  if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  container.classList.remove('results-updating');
+  void container.offsetWidth;
+  container.classList.add('results-updating');
+  window.setTimeout(function() {
+    container.classList.remove('results-updating');
+  }, 520);
+}
+
 // --- 渲染 ---
 function render() {
   var week = document.getElementById('weekSel').value;
@@ -122,6 +132,7 @@ function render() {
   var favKeys = getFavorites();
   var days = wdata[bld];
   var html = '';
+  var dayBlockIndex = 0;
 
   for (var i = 0; i < DAY_NAMES.length; i++) {
     var dname = DAY_NAMES[i];
@@ -155,7 +166,8 @@ function render() {
 
     var isExpanded = (expandedDay === dname);
 
-    html += '<div class="day-block' + (isExpanded ? ' expanded' : '') + '">';
+    html += '<div class="day-block' + (isExpanded ? ' expanded' : '') + '" style="--block-index:' + dayBlockIndex + '">';
+    dayBlockIndex++;
     html += '<div class="day-header" onclick="toggleDay(\'' + dname + '\')">';
     html += '<span class="day-header-left">';
     html += '<span class="expand-icon">' + (isExpanded ? '▾' : '▸') + '</span>';
@@ -204,10 +216,13 @@ function render() {
   }
 
   container.innerHTML = html;
+  flashResultsRefresh(container);
 }
 
 // --- 初始化 ---
 function init() {
+  if (!document.getElementById('weekSel') || typeof DATA === 'undefined') return;
+
   // 自动选择当前周
   var weekSel = document.getElementById('weekSel');
   weekSel.value = String(getCurrentWeek());

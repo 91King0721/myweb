@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <title>// QUERY_TERMINAL - 空闲教室查询</title>
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="prefetch" href="index.html">
 </head>
-<body>
+<body class="query-page">
   <!-- 导航栏 -->
   <nav class="nav">
     <div class="nav-inner">
@@ -25,6 +26,12 @@
   </nav>
 
   <main class="main">
+    <div class="query-band">
+      <span>MODERN INDUSTRIAL</span>
+      <strong>CLASSROOM_SCAN</strong>
+      <span>TERMINAL</span>
+    </div>
+
     <!-- 页面标题 -->
     <div class="page-header">
       <h1 class="page-title">教室课表查询终端</h1>
@@ -128,6 +135,7 @@
     <div id="results"></div>
   </main>
 
+  <script src="assets/js/transitions.js"></script>
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
