@@ -71,7 +71,7 @@ var expandedDay = null;
 
 function toggleDay(dayName) {
   expandedDay = (expandedDay === dayName) ? null : dayName;
-  render();
+  render({ scrollToExpanded: true });
 }
 
 // --- 自动检测当前周（第1周周一 = 2026/3/9）---
@@ -90,18 +90,95 @@ function getCurrentDayName() {
   return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][idx];
 }
 
-function flashResultsRefresh(container) {
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+var resultsRefreshFrame = null;
+var resultsRefreshTimer = null;
+
+function scheduleResultsRefresh(container) {
   if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (resultsRefreshFrame) window.cancelAnimationFrame(resultsRefreshFrame);
+  if (resultsRefreshTimer) window.clearTimeout(resultsRefreshTimer);
+
   container.classList.remove('results-updating');
-  void container.offsetWidth;
-  container.classList.add('results-updating');
-  window.setTimeout(function() {
-    container.classList.remove('results-updating');
-  }, 520);
+  resultsRefreshFrame = window.requestAnimationFrame(function() {
+    resultsRefreshFrame = window.requestAnimationFrame(function() {
+      container.classList.add('results-updating');
+      resultsRefreshTimer = window.setTimeout(function() {
+        container.classList.remove('results-updating');
+        resultsRefreshTimer = null;
+      }, 520);
+      resultsRefreshFrame = null;
+    });
+  });
+}
+
+function renderDayBody(periodFreeRooms, activePeriods, bld, favKeys) {
+  var html = '<div class="day-body">';
+  html += '<div class="table-wrap"><table>';
+  html += '<tr><th class="room-name">教室</th><th class="seat-th">座位</th>';
+
+  for (var pi = 0; pi < activePeriods.length; pi++) {
+    var p = activePeriods[pi];
+    var t = PERIODS[String(p)].substring(0, 5);
+    html += '<th class="period">' + p + '<span class="period-time">' + t + '</span></th>';
+  }
+  html += '</tr>';
+
+  for (var j = 0; j < periodFreeRooms.length; j++) {
+    var r = periodFreeRooms[j];
+    var roomKey = bld + '|' + r.name;
+    var isFav = favKeys.indexOf(roomKey) !== -1;
+
+    var starSvg = isFav
+      ? '<svg class="fav-star filled" viewBox="0 0 24 24" width="14" height="14" data-building="' + bld + '" data-room="' + r.name + '"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg>'
+      : '<svg class="fav-star" viewBox="0 0 24 24" width="14" height="14" data-building="' + bld + '" data-room="' + r.name + '"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+
+    html += '<tr class="' + (isFav ? 'fav-row' : '') + '">';
+    html += '<td class="room-name">' + starSvg + '<span class="room-text">' + r.name + '</span><span class="room-seats-mobile">' + r.seats + '座</span></td>';
+    html += '<td class="seat-td">' + r.seats + '</td>';
+    for (var k = 0; k < activePeriods.length; k++) {
+      var periodIdx = activePeriods[k] - 1;
+      var cls = r.periods[periodIdx] ? 'occ' : 'free';
+      html += '<td class="' + cls + '"><span class="' + cls + '-mark"></span></td>';
+    }
+    html += '</tr>';
+  }
+
+  html += '</table></div>';
+  html += '</div>';
+  return html;
+}
+
+function scrollExpandedDayIntoView(container) {
+  if (!container || !expandedDay || !isMobileViewport()) return;
+
+  window.requestAnimationFrame(function() {
+    var blocks = container.querySelectorAll('.day-block[data-day]');
+    var target = null;
+    for (var i = 0; i < blocks.length; i++) {
+      if (blocks[i].getAttribute('data-day') === expandedDay) {
+        target = blocks[i];
+        break;
+      }
+    }
+    if (!target) return;
+
+    var navOffset = 70;
+    var rect = target.getBoundingClientRect();
+    if (rect.top >= navOffset && rect.top < window.innerHeight * 0.72) return;
+
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + rect.top - navOffset),
+      behavior: 'auto'
+    });
+  });
 }
 
 // --- 渲染 ---
-function render() {
+function render(options) {
   var week = document.getElementById('weekSel').value;
   var bld = document.getElementById('bldSel').value;
   var query = document.getElementById('searchInput').value.trim();
@@ -166,7 +243,7 @@ function render() {
 
     var isExpanded = (expandedDay === dname);
 
-    html += '<div class="day-block' + (isExpanded ? ' expanded' : '') + '" style="--block-index:' + dayBlockIndex + '">';
+    html += '<div class="day-block' + (isExpanded ? ' expanded' : '') + '" data-day="' + dname + '" style="--block-index:' + dayBlockIndex + '">';
     dayBlockIndex++;
     html += '<div class="day-header" onclick="toggleDay(\'' + dname + '\')">';
     html += '<span class="day-header-left">';
@@ -176,38 +253,10 @@ function render() {
     html += '<span class="free-info">空闲 <span class="free-num">' + periodFreeRooms.length + '</span><span class="free-sep">/</span><span class="free-total">' + rooms.length + '</span> 间</span>';
     html += '</div>';
 
-    html += '<div class="day-body"' + (isExpanded ? '' : ' style="display:none"') + '>';
-    html += '<div class="table-wrap"><table>';
-    html += '<tr><th class="room-name">教室</th><th class="seat-th">座位</th>';
-    for (var pi = 0; pi < activePeriods.length; pi++) {
-      var p = activePeriods[pi];
-      var t = PERIODS[String(p)].substring(0, 5);
-      html += '<th class="period">' + p + '<span class="period-time">' + t + '</span></th>';
-    }
-    html += '</tr>';
-
-    for (var j = 0; j < periodFreeRooms.length; j++) {
-      var r = periodFreeRooms[j];
-      var roomKey = bld + '|' + r.name;
-      var isFav = favKeys.indexOf(roomKey) !== -1;
-
-      var starSvg = isFav
-        ? '<svg class="fav-star filled" viewBox="0 0 24 24" width="14" height="14" data-building="' + bld + '" data-room="' + r.name + '"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg>'
-        : '<svg class="fav-star" viewBox="0 0 24 24" width="14" height="14" data-building="' + bld + '" data-room="' + r.name + '"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
-
-      html += '<tr class="' + (isFav ? 'fav-row' : '') + '">';
-      html += '<td class="room-name">' + starSvg + '<span class="room-text">' + r.name + '</span><span class="room-seats-mobile">' + r.seats + '座</span></td>';
-      html += '<td class="seat-td">' + r.seats + '</td>';
-      for (var k = 0; k < activePeriods.length; k++) {
-        var periodIdx = activePeriods[k] - 1;
-        var cls = r.periods[periodIdx] ? 'occ' : 'free';
-        html += '<td class="' + cls + '"><span class="' + cls + '-mark"></span></td>';
-      }
-      html += '</tr>';
+    if (isExpanded) {
+      html += renderDayBody(periodFreeRooms, activePeriods, bld, favKeys);
     }
 
-    html += '</table></div>';
-    html += '</div>';
     html += '</div>';
   }
 
@@ -216,7 +265,10 @@ function render() {
   }
 
   container.innerHTML = html;
-  flashResultsRefresh(container);
+  scheduleResultsRefresh(container);
+  if (options && options.scrollToExpanded) {
+    scrollExpandedDayIntoView(container);
+  }
 }
 
 // --- 初始化 ---
@@ -241,7 +293,7 @@ function init() {
     }
   });
 
-  render();
+  render({ scrollToExpanded: true });
 }
 
 init();
