@@ -78,6 +78,20 @@ const checks = [
       files.app.includes('scrollExpandedDayIntoView') &&
       files.app.includes('data-day') &&
       files.app.includes('scrollToExpanded')
+  },
+  {
+    name: 'premium polish stays CSS-only without remote font imports',
+    pass:
+      files.css.includes('Premium Industrial Refinement') &&
+      !/@import\s+url/.test(files.css) &&
+      !/fonts\.googleapis/.test(files.css)
+  },
+  {
+    name: 'premium polish uses cheap paint and accessible states',
+    pass:
+      files.css.includes('content-visibility: auto') &&
+      files.css.includes(':focus-visible') &&
+      files.css.includes('@media (hover: hover)')
   }
 ];
 
