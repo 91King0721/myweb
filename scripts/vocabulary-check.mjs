@@ -100,6 +100,44 @@ const checks = [
       files.app.includes('localStorage')
   },
   {
+    name: 'compact session recovery is capped and stored separately',
+    pass:
+      files.app.includes("session: 'vocabularySessionV1'") &&
+      files.app.includes('MAX_SESSION_CHARS = 48000') &&
+      files.app.includes('MAX_STORED_ANSWERS = 800') &&
+      files.app.includes('restoreSession') &&
+      files.app.includes("window.addEventListener('pagehide', saveSession)")
+  },
+  {
+    name: 'version upgrades never clear existing browser data',
+    pass:
+      !files.app.includes('localStorage.clear') &&
+      !files.app.includes('removeItem(') &&
+      !files.library.includes('localStorage.clear') &&
+      !files.library.includes('removeItem(')
+  },
+  {
+    name: 'wrong-book supports JSON export and merge import',
+    pass:
+      files.wrongPage.includes('id="wrongExportButton"') &&
+      files.wrongPage.includes('id="wrongImportButton"') &&
+      files.wrongPage.includes('id="wrongImportInput"') &&
+      files.library.includes("EXPORT_SCHEMA = 'vocabulary-wrong-book'") &&
+      files.library.includes('exportWrongWords') &&
+      files.library.includes('importWrongWords') &&
+      files.library.includes('mergeWrongRecord')
+  },
+  {
+    name: 'wrong-book sorts counts, groups frequencies, and limits List options to wrong entries',
+    pass:
+      files.library.includes('getWrongCount(right) - getWrongCount(left)') &&
+      files.library.includes("count >= 3") &&
+      files.library.includes("count === 2") &&
+      files.library.includes("key: 'low'") &&
+      files.library.includes('new Set(entries.map') &&
+      files.wrongPage.includes('id="wrongFrequencySummary"')
+  },
+  {
     name: 'browser speech synthesis is wired to the word reader',
     pass:
       files.app.includes('SpeechSynthesisUtterance') &&

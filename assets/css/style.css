@@ -4469,6 +4469,118 @@ body[data-library="wrong"] .vocab-library-module.active > b {
   box-shadow: inset 5px 0 0 var(--ef-accent);
 }
 
+.vocab-wrong-tools {
+  padding: 18px 0;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.35fr);
+  gap: 14px;
+  border-bottom: 1px solid #d5d9d0;
+}
+
+.vocab-wrong-data-actions {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vocab-wrong-data-actions button {
+  min-height: 52px;
+  padding: 9px 14px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  color: #111111;
+  background: #f5f6f1;
+  border: 1px solid #111111;
+  border-left: 6px solid var(--ef-accent);
+  border-radius: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vocab-wrong-data-actions button:disabled {
+  color: #8a8f87;
+  background: #eceee8;
+  border-color: #c7ccc2;
+  cursor: not-allowed;
+}
+
+.vocab-wrong-data-actions button span {
+  color: #797e76;
+  font-family: var(--ef-font-mono);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.vocab-wrong-data-actions p {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  color: #747971;
+  font-family: var(--ef-font-mono);
+  font-size: 9px;
+}
+
+.vocab-frequency-summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.vocab-frequency-summary > div {
+  min-width: 0;
+  min-height: 76px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: center;
+  gap: 2px 8px;
+  background: #f5f6f1;
+  border: 1px solid #d1d5cd;
+  border-top: 4px solid #737870;
+}
+
+.vocab-frequency-summary > div.is-high {
+  border-top-color: #b92231;
+}
+
+.vocab-frequency-summary > div.is-medium {
+  border-top-color: #d67a00;
+}
+
+.vocab-frequency-summary > div.is-low {
+  border-top-color: #68746a;
+}
+
+.vocab-frequency-summary span,
+.vocab-frequency-summary small {
+  min-width: 0;
+  font-family: var(--ef-font-mono);
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.vocab-frequency-summary span {
+  align-self: end;
+}
+
+.vocab-frequency-summary small {
+  color: #747971;
+}
+
+.vocab-frequency-summary strong {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  align-self: center;
+  color: #111111;
+  font-size: 28px;
+  line-height: 1;
+}
+
 .vocab-library-notice {
   min-height: 46px;
   margin: 16px 0;
@@ -4522,6 +4634,76 @@ body[data-library="wrong"] .vocab-library-module.active > b {
   background: #f7f8f4;
   border: 1px solid #d6dad1;
   border-left: 6px solid #111111;
+}
+
+.vocab-library-item.is-high-frequency {
+  border-left-color: #b92231;
+}
+
+.vocab-library-item.is-medium-frequency {
+  border-left-color: #d67a00;
+}
+
+.vocab-library-item.is-low-frequency {
+  border-left-color: #68746a;
+}
+
+.vocab-frequency-group {
+  display: grid;
+  gap: 10px;
+}
+
+.vocab-frequency-group + .vocab-frequency-group {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #d6dad1;
+}
+
+.vocab-frequency-group-header {
+  min-height: 58px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #eceee8;
+  border-left: 6px solid #68746a;
+}
+
+.vocab-frequency-group.is-high .vocab-frequency-group-header {
+  border-left-color: #b92231;
+}
+
+.vocab-frequency-group.is-medium .vocab-frequency-group-header {
+  border-left-color: #d67a00;
+}
+
+.vocab-frequency-group-header span {
+  color: #767b73;
+  font-family: var(--ef-font-mono);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.vocab-frequency-group-header h3 {
+  color: #111111;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+.vocab-frequency-group-header b {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  color: #ffffff;
+  background: #111111;
+  font-family: var(--ef-font-mono);
+  font-size: 9px;
+}
+
+.vocab-frequency-group-list {
+  display: grid;
+  gap: 10px;
 }
 
 .vocab-library-item-index {
@@ -4584,6 +4766,32 @@ body[data-library="wrong"] .vocab-library-module.active > b {
   color: #797e76;
   font-family: var(--ef-font-mono);
   font-size: 9px;
+}
+
+.vocab-library-item-meta-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.vocab-frequency-badge {
+  padding: 4px 7px;
+  color: #ffffff;
+  background: #68746a;
+  font-family: var(--ef-font-mono);
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.vocab-frequency-badge.is-high {
+  background: #b92231;
+}
+
+.vocab-frequency-badge.is-medium {
+  color: #111111;
+  background: #ef9c25;
 }
 
 .vocab-library-item-actions {
@@ -4689,6 +4897,11 @@ body[data-library="wrong"] .vocab-library-module.active > b {
     background: var(--ef-accent);
     border-color: #111111;
   }
+
+  .vocab-wrong-data-actions button:not(:disabled):hover {
+    color: #ffffff;
+    background: #111111;
+  }
 }
 
 @media (max-width: 900px) {
@@ -4708,6 +4921,10 @@ body[data-library="wrong"] .vocab-library-module.active > b {
 
   .vocab-library-filters {
     width: 100%;
+  }
+
+  .vocab-wrong-tools {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -4751,6 +4968,14 @@ body[data-library="wrong"] .vocab-library-module.active > b {
   .vocab-library-item-index {
     display: none;
   }
+
+  .vocab-frequency-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .vocab-frequency-summary > div {
+    min-height: 64px;
+  }
 }
 
 @media (max-width: 520px) {
@@ -4781,6 +5006,14 @@ body[data-library="wrong"] .vocab-library-module.active > b {
 
   .vocab-library-item-action {
     flex: 1 1 0;
+  }
+
+  .vocab-wrong-data-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .vocab-wrong-data-actions p {
+    grid-column: 1;
   }
 }
 

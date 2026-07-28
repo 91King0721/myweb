@@ -92,6 +92,45 @@
         </div>
       </div>
 
+      <div class="vocab-wrong-tools" id="wrongDataActions">
+        <div class="vocab-wrong-data-actions">
+          <button type="button" id="wrongExportButton">
+            <span>EXPORT_JSON</span>
+            导出错题
+          </button>
+          <button type="button" id="wrongImportButton">
+            <span>IMPORT_JSON</span>
+            导入错题
+          </button>
+          <input
+            type="file"
+            id="wrongImportInput"
+            accept=".json,application/json"
+            aria-label="选择错题 JSON 文件"
+            hidden
+          >
+          <p>导入时自动合并，不覆盖本设备已有记录。</p>
+        </div>
+
+        <div class="vocab-frequency-summary" id="wrongFrequencySummary" aria-label="错题频率统计">
+          <div class="is-high">
+            <span>高频错题</span>
+            <strong id="wrongHighCount">0</strong>
+            <small>答错 ≥ 3 次</small>
+          </div>
+          <div class="is-medium">
+            <span>中频错题</span>
+            <strong id="wrongMediumCount">0</strong>
+            <small>答错 2 次</small>
+          </div>
+          <div class="is-low">
+            <span>低频错题</span>
+            <strong id="wrongLowCount">0</strong>
+            <small>答错 ≤ 1 次</small>
+          </div>
+        </div>
+      </div>
+
       <div class="vocab-library-notice" id="libraryNotice" role="status" aria-live="polite" hidden>
         <span id="libraryNoticeText"></span>
         <button type="button" id="libraryUndoButton">撤销</button>

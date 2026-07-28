@@ -2,7 +2,7 @@
  * 考研高频词测试终端
  * - 四选一 / 键入单词
  * - List 1-61 自由切换
- * - 错题本、收藏夹和偏好存储在 localStorage
+ * - 错题本、收藏夹、偏好和轻量进度存储在 localStorage
  * - 使用浏览器 SpeechSynthesis 朗读英文
  */
 (function () {
@@ -12,8 +12,12 @@
   var STORAGE_KEYS = {
     favorites: 'vocabularyFavoritesV1',
     wrong: 'vocabularyWrongWordsV1',
-    preferences: 'vocabularyPreferencesV1'
+    preferences: 'vocabularyPreferencesV1',
+    session: 'vocabularySessionV1'
   };
+  var SESSION_VERSION = 1;
+  var MAX_SESSION_CHARS = 48000;
+  var MAX_STORED_ANSWERS = 800;
 
   var listByNumber = new Map();
   var entryById = new Map();
@@ -32,18 +36,28 @@
   var favorites = loadFavorites();
   var wrongWords = loadWrongWords();
   var preferences = loadPreferences();
+  var requestedScope = getRequestedScope();
+  var storedSession = loadSessionSnapshot();
   var collectionNoticeTimer = 0;
   var collectionPulseTimer = 0;
   var state = {
-    listNumber: clampListNumber(preferences.listNumber || 1),
-    mode: preferences.mode === 'typing' ? 'typing' : 'choice',
-    scope: getInitialScope(),
+    listNumber: clampListNumber(
+      storedSession && storedSession.listNumber || preferences.listNumber || 1
+    ),
+    mode: storedSession && storedSession.mode === 'typing' ||
+      !storedSession && preferences.mode === 'typing'
+      ? 'typing'
+      : 'choice',
+    scope: requestedScope ||
+      storedSession && normalizeScope(storedSession.scope) ||
+      'list',
     deck: [],
     position: 0,
     answers: Object.create(null),
     correct: 0,
     wrong: 0,
-    completed: false
+    completed: false,
+    draft: ''
   };
 
   function safeParse(value, fallback) {
@@ -76,6 +90,14 @@
   function loadPreferences() {
     var stored = safeParse(localStorage.getItem(STORAGE_KEYS.preferences), {});
     return stored && typeof stored === 'object' ? stored : {};
+  }
+
+  function loadSessionSnapshot() {
+    var stored = safeParse(localStorage.getItem(STORAGE_KEYS.session), null);
+    if (!stored || typeof stored !== 'object' || Number(stored.version) !== SESSION_VERSION) {
+      return null;
+    }
+    return stored;
   }
 
   function saveFavorites() {
@@ -111,13 +133,142 @@
     return Math.max(1, Math.min(61, Math.round(number)));
   }
 
-  function getInitialScope() {
+  function normalizeScope(scope) {
+    return ['list', 'wrong', 'favorite'].indexOf(scope) !== -1 ? scope : '';
+  }
+
+  function getRequestedScope() {
     try {
       var scope = new URLSearchParams(window.location.search).get('scope');
-      return scope === 'wrong' || scope === 'favorite' ? scope : 'list';
+      return scope === 'wrong' || scope === 'favorite' ? scope : '';
     } catch (error) {
-      return 'list';
+      return '';
     }
+  }
+
+  function compactAnswer(entry, answer) {
+    if (state.mode === 'typing') {
+      return [
+        entry.id,
+        answer.correct ? 1 : 0,
+        String(answer.typedValue || '').slice(0, 80)
+      ];
+    }
+
+    var selectedIndex = Number(answer.selectedIndex);
+    if (!Number.isInteger(selectedIndex)) {
+      var options = getChoiceOptions(entry);
+      selectedIndex = options.findIndex(function (option) {
+        return option.meaning === answer.selectedMeaning;
+      });
+    }
+    return [entry.id, answer.correct ? 1 : 0, Math.max(0, selectedIndex)];
+  }
+
+  function buildSessionSnapshot() {
+    var currentEntry = getCurrentEntry();
+    var deckPositionById = new Map();
+    state.deck.forEach(function (entry, index) {
+      deckPositionById.set(entry.id, index);
+    });
+
+    var answeredIds = Object.keys(state.answers).filter(function (id) {
+      return entryById.has(id) && deckPositionById.has(id);
+    });
+    answeredIds.sort(function (left, right) {
+      var leftDistance = Math.abs(deckPositionById.get(left) - state.position);
+      var rightDistance = Math.abs(deckPositionById.get(right) - state.position);
+      return leftDistance - rightDistance;
+    });
+
+    var retainedIds = answeredIds.slice(0, MAX_STORED_ANSWERS);
+    var snapshot = {
+      version: SESSION_VERSION,
+      savedAt: new Date().toISOString(),
+      listNumber: state.listNumber,
+      mode: state.mode,
+      scope: state.scope,
+      currentEntryId: currentEntry ? currentEntry.id : '',
+      position: state.position,
+      completed: state.completed,
+      correct: state.correct,
+      wrong: state.wrong,
+      draft: String(state.draft || '').slice(0, 80),
+      truncated: retainedIds.length < answeredIds.length,
+      answers: retainedIds.map(function (id) {
+        return compactAnswer(entryById.get(id), state.answers[id]);
+      })
+    };
+    var serialized = JSON.stringify(snapshot);
+
+    while (serialized.length > MAX_SESSION_CHARS && snapshot.answers.length > 0) {
+      snapshot.answers.pop();
+      snapshot.truncated = true;
+      serialized = JSON.stringify(snapshot);
+    }
+    return serialized;
+  }
+
+  function saveSession() {
+    try {
+      localStorage.setItem(STORAGE_KEYS.session, buildSessionSnapshot());
+    } catch (error) {
+      // Never clear existing data when storage is full or unavailable.
+    }
+  }
+
+  function restoreSession(snapshot) {
+    if (!snapshot || (requestedScope && requestedScope !== normalizeScope(snapshot.scope))) {
+      return false;
+    }
+
+    state.deck = getDeck();
+    state.answers = Object.create(null);
+    state.completed = Boolean(snapshot.completed && state.deck.length);
+    state.draft = String(snapshot.draft || '').slice(0, 80);
+
+    var savedPosition = Math.max(0, Math.floor(Number(snapshot.position) || 0));
+    var currentIndex = snapshot.currentEntryId
+      ? state.deck.findIndex(function (entry) { return entry.id === snapshot.currentEntryId; })
+      : -1;
+    state.position = state.deck.length
+      ? Math.min(currentIndex >= 0 ? currentIndex : savedPosition, state.deck.length - 1)
+      : 0;
+
+    var restoredCorrect = 0;
+    var restoredWrong = 0;
+    if (Array.isArray(snapshot.answers)) {
+      snapshot.answers.forEach(function (row) {
+        if (!Array.isArray(row) || row.length < 3) return;
+        var entry = entryById.get(row[0]);
+        if (!entry || !state.deck.some(function (item) { return item.id === entry.id; })) return;
+        var answer = { correct: row[1] === 1 };
+
+        if (state.mode === 'typing') {
+          answer.typedValue = String(row[2] || '').slice(0, 80);
+        } else {
+          var options = getChoiceOptions(entry);
+          var selectedIndex = Math.max(
+            0,
+            Math.min(options.length - 1, Number(row[2]) || 0)
+          );
+          var option = options[selectedIndex];
+          answer.selectedMeaning = option ? option.meaning : entry.meaning;
+          answer.selectedIndex = selectedIndex;
+        }
+        state.answers[entry.id] = answer;
+        if (answer.correct) restoredCorrect += 1;
+        else restoredWrong += 1;
+      });
+    }
+
+    state.correct = snapshot.truncated
+      ? Math.max(restoredCorrect, Math.floor(Number(snapshot.correct) || 0))
+      : restoredCorrect;
+    state.wrong = snapshot.truncated
+      ? Math.max(restoredWrong, Math.floor(Number(snapshot.wrong) || 0))
+      : restoredWrong;
+    return true;
   }
 
   function cacheRefs() {
@@ -209,6 +360,7 @@
     state.correct = 0;
     state.wrong = 0;
     state.completed = false;
+    state.draft = '';
     render();
 
     if (config.scroll && window.matchMedia('(max-width: 900px)').matches) {
@@ -513,7 +665,7 @@
         if (isSelected) button.classList.add('is-selected');
       } else {
         button.addEventListener('click', function () {
-          submitChoice(entry, option.meaning);
+          submitChoice(entry, option.meaning, index);
         });
       }
 
@@ -549,6 +701,8 @@
       input.disabled = true;
       submit.disabled = true;
       input.classList.add(answered.correct ? 'is-correct' : 'is-wrong');
+    } else {
+      input.value = state.draft;
     }
 
     inputRow.appendChild(input);
@@ -570,6 +724,7 @@
     });
     input.addEventListener('input', function () {
       input.classList.remove('needs-answer');
+      state.draft = input.value.slice(0, 80);
     });
 
     refs.questionArea.replaceChildren(form);
@@ -579,11 +734,12 @@
     return value.normalize('NFC').toLowerCase().replace(/\s+/g, '');
   }
 
-  function submitChoice(entry, selectedMeaning) {
+  function submitChoice(entry, selectedMeaning, selectedIndex) {
     if (getAnsweredState(entry)) return;
     recordAnswer(entry, {
       correct: selectedMeaning === entry.meaning,
-      selectedMeaning: selectedMeaning
+      selectedMeaning: selectedMeaning,
+      selectedIndex: selectedIndex
     });
   }
 
@@ -598,6 +754,7 @@
   }
 
   function recordAnswer(entry, answer) {
+    state.draft = '';
     state.answers[entry.id] = answer;
     if (answer.correct) {
       state.correct += 1;
@@ -610,10 +767,14 @@
 
   function addWrongWord(id) {
     var previous = wrongWords[id] || {};
-    wrongWords[id] = {
+    var updated = {
       count: Number(previous.count || 0) + 1,
       lastWrongAt: new Date().toISOString()
     };
+    if (previous.addedManuallyAt) {
+      updated.addedManuallyAt = previous.addedManuallyAt;
+    }
+    wrongWords[id] = updated;
     saveWrongWords();
   }
 
@@ -716,6 +877,7 @@
     } else {
       state.position += 1;
     }
+    state.draft = '';
     render();
   }
 
@@ -726,6 +888,7 @@
     } else if (state.position > 0) {
       state.position -= 1;
     }
+    state.draft = '';
     render();
   }
 
@@ -798,12 +961,14 @@
       resetRound({ scroll: true });
     });
     document.addEventListener('keydown', handleKeyboard);
+    window.addEventListener('pagehide', saveSession);
   }
 
   function render() {
     updateControlState();
     var entry = getCurrentEntry();
     updateProgress(entry);
+    saveSession();
 
     if (!state.deck.length) {
       renderEmptyState();
@@ -831,7 +996,11 @@
     cacheRefs();
     renderListOptions();
     bindEvents();
-    resetRound();
+    if (restoreSession(storedSession)) {
+      render();
+    } else {
+      resetRound();
+    }
   }
 
   if (document.readyState === 'loading') {

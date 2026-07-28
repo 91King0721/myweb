@@ -1,8 +1,9 @@
 /**
  * 独立词库模块
  * - 错题本 / 单词收藏分别查看
- * - 搜索、List 筛选、朗读、移除与撤销
- * - 与测试页共享 localStorage 数据
+ * - 搜索、动态 List 筛选、朗读、移除与撤销
+ * - 错题次数分级、排序、导出与合并导入
+ * - 与测试页共享 localStorage 数据，兼容 v0.4 已有记录
  */
 (function () {
   'use strict';
@@ -15,6 +16,8 @@
     favorites: 'vocabularyFavoritesV1',
     wrong: 'vocabularyWrongWordsV1'
   };
+  var EXPORT_SCHEMA = 'vocabulary-wrong-book';
+  var EXPORT_VERSION = 1;
   var entryById = new Map();
   var allEntries = [];
   var favorites = new Set();
@@ -39,6 +42,26 @@
     }
   }
 
+  function cleanTimestamp(value) {
+    if (typeof value !== 'string') return '';
+    var date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+  }
+
+  function normalizeWrongRecord(record) {
+    var source = record && typeof record === 'object'
+      ? record
+      : { count: record };
+    var count = Math.max(0, Math.floor(Number(source.count) || 0));
+    var normalized = { count: count };
+    var lastWrongAt = cleanTimestamp(source.lastWrongAt);
+    var addedManuallyAt = cleanTimestamp(source.addedManuallyAt);
+
+    if (lastWrongAt) normalized.lastWrongAt = lastWrongAt;
+    if (addedManuallyAt) normalized.addedManuallyAt = addedManuallyAt;
+    return normalized;
+  }
+
   function loadCollections() {
     var storedFavorites = safeParse(localStorage.getItem(STORAGE_KEYS.favorites), []);
     var storedWrong = safeParse(localStorage.getItem(STORAGE_KEYS.wrong), {});
@@ -52,7 +75,7 @@
     wrongWords = {};
     if (storedWrong && !Array.isArray(storedWrong) && typeof storedWrong === 'object') {
       Object.keys(storedWrong).forEach(function (id) {
-        if (entryById.has(id)) wrongWords[id] = storedWrong[id];
+        if (entryById.has(id)) wrongWords[id] = normalizeWrongRecord(storedWrong[id]);
       });
     }
   }
@@ -81,19 +104,38 @@
       'collectionTestLink',
       'libraryNotice',
       'libraryNoticeText',
-      'libraryUndoButton'
+      'libraryUndoButton',
+      'wrongDataActions',
+      'wrongExportButton',
+      'wrongImportButton',
+      'wrongImportInput',
+      'wrongFrequencySummary',
+      'wrongHighCount',
+      'wrongMediumCount',
+      'wrongLowCount'
     ].forEach(function (id) {
       refs[id] = document.getElementById(id);
     });
   }
 
-  function populateListFilter() {
-    lists.forEach(function (list) {
-      var option = document.createElement('option');
-      option.value = String(list.list);
-      option.textContent = 'List ' + list.list;
-      refs.collectionListFilter.appendChild(option);
-    });
+  function getWrongCount(entry) {
+    return Number((wrongWords[entry.id] || {}).count || 0);
+  }
+
+  function getWrongTime(entry) {
+    var record = wrongWords[entry.id] || {};
+    var date = new Date(record.lastWrongAt || record.addedManuallyAt || 0);
+    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  }
+
+  function getFrequency(count) {
+    if (count >= 3) {
+      return { key: 'high', label: '高频错题', code: 'HIGH_FREQUENCY' };
+    }
+    if (count === 2) {
+      return { key: 'medium', label: '中频错题', code: 'MEDIUM_FREQUENCY' };
+    }
+    return { key: 'low', label: '低频错题', code: 'LOW_FREQUENCY' };
   }
 
   function getCollectionEntries() {
@@ -105,7 +147,38 @@
 
     return allEntries.filter(function (entry) {
       return Boolean(wrongWords[entry.id]);
+    }).sort(function (left, right) {
+      return getWrongCount(right) - getWrongCount(left) ||
+        getWrongTime(right) - getWrongTime(left) ||
+        left.list - right.list ||
+        left.index - right.index;
     });
+  }
+
+  function populateListFilter(entries) {
+    var selected = refs.collectionListFilter.value || 'all';
+    var listNumbers = libraryType === 'wrong'
+      ? Array.from(new Set(entries.map(function (entry) { return entry.list; })))
+      : lists.map(function (list) { return list.list; });
+    var fragment = document.createDocumentFragment();
+    var allOption = document.createElement('option');
+
+    listNumbers.sort(function (left, right) { return left - right; });
+    allOption.value = 'all';
+    allOption.textContent = '全部 List';
+    fragment.appendChild(allOption);
+
+    listNumbers.forEach(function (listNumber) {
+      var option = document.createElement('option');
+      option.value = String(listNumber);
+      option.textContent = 'List ' + listNumber;
+      fragment.appendChild(option);
+    });
+
+    refs.collectionListFilter.replaceChildren(fragment);
+    refs.collectionListFilter.value = listNumbers.indexOf(Number(selected)) !== -1
+      ? selected
+      : 'all';
   }
 
   function normalizeSearch(value) {
@@ -173,6 +246,7 @@
     var source = document.createElement('span');
     var meaning = document.createElement('p');
     var footer = document.createElement('div');
+    var metaRow = document.createElement('div');
     var meta = document.createElement('span');
     var actions = document.createElement('div');
 
@@ -190,15 +264,27 @@
     meaning.className = 'vocab-library-item-meaning';
     meaning.textContent = entry.meaning;
     footer.className = 'vocab-library-item-footer';
+    metaRow.className = 'vocab-library-item-meta-row';
     meta.className = 'vocab-library-item-meta';
     meta.textContent = libraryType === 'wrong' ? formatWrongMeta(entry) : '已收藏 · 本设备保存';
     actions.className = 'vocab-library-item-actions';
 
+    if (libraryType === 'wrong') {
+      var frequency = getFrequency(getWrongCount(entry));
+      var badge = document.createElement('span');
+      article.classList.add('is-' + frequency.key + '-frequency');
+      article.dataset.frequency = frequency.key;
+      badge.className = 'vocab-frequency-badge is-' + frequency.key;
+      badge.textContent = frequency.label;
+      metaRow.appendChild(badge);
+    }
+
     wordRow.appendChild(word);
     wordRow.appendChild(source);
+    metaRow.appendChild(meta);
     actions.appendChild(makeSpeechButton(entry));
     actions.appendChild(makeRemoveButton(entry));
-    footer.appendChild(meta);
+    footer.appendChild(metaRow);
     footer.appendChild(actions);
     copy.appendChild(wordRow);
     copy.appendChild(meaning);
@@ -206,6 +292,74 @@
     article.appendChild(sequence);
     article.appendChild(copy);
     return article;
+  }
+
+  function makeFrequencyGroup(frequency, entries, startIndex) {
+    var section = document.createElement('section');
+    var header = document.createElement('header');
+    var title = document.createElement('div');
+    var list = document.createElement('div');
+
+    section.className = 'vocab-frequency-group is-' + frequency.key;
+    section.dataset.frequency = frequency.key;
+    header.className = 'vocab-frequency-group-header';
+    title.innerHTML =
+      '<span>' + frequency.code + '</span>' +
+      '<h3>' + frequency.label + '</h3>';
+    header.appendChild(title);
+    header.insertAdjacentHTML('beforeend', '<b>' + entries.length + ' 个词</b>');
+    list.className = 'vocab-frequency-group-list';
+
+    entries.forEach(function (entry, index) {
+      list.appendChild(renderEntry(entry, startIndex + index));
+    });
+
+    section.appendChild(header);
+    section.appendChild(list);
+    return section;
+  }
+
+  function renderEntries(entries) {
+    var fragment = document.createDocumentFragment();
+
+    if (libraryType !== 'wrong') {
+      entries.forEach(function (entry, index) {
+        fragment.appendChild(renderEntry(entry, index));
+      });
+      refs.collectionList.replaceChildren(fragment);
+      return;
+    }
+
+    var frequencies = [
+      getFrequency(3),
+      getFrequency(2),
+      getFrequency(1)
+    ];
+    var startIndex = 0;
+
+    frequencies.forEach(function (frequency) {
+      var groupEntries = entries.filter(function (entry) {
+        return getFrequency(getWrongCount(entry)).key === frequency.key;
+      });
+      if (!groupEntries.length) return;
+      fragment.appendChild(makeFrequencyGroup(frequency, groupEntries, startIndex));
+      startIndex += groupEntries.length;
+    });
+
+    refs.collectionList.replaceChildren(fragment);
+  }
+
+  function updateFrequencySummary(entries) {
+    if (!refs.wrongFrequencySummary) return;
+    var counts = { high: 0, medium: 0, low: 0 };
+
+    entries.forEach(function (entry) {
+      counts[getFrequency(getWrongCount(entry)).key] += 1;
+    });
+
+    refs.wrongHighCount.textContent = String(counts.high);
+    refs.wrongMediumCount.textContent = String(counts.medium);
+    refs.wrongLowCount.textContent = String(counts.low);
   }
 
   function updateEmptyState(total, visible) {
@@ -231,15 +385,16 @@
     } else {
       refs.collectionEmptyTitle.textContent = '错题本还是空的';
       refs.collectionEmptyDescription.textContent =
-        '答错的单词会自动加入这里，也可以在测试页手动添加。';
+        '答错的单词会自动加入这里，也可以导入另一台设备的错题。';
     }
   }
 
   function render() {
     var entries = getCollectionEntries();
-    var visibleEntries = getVisibleEntries(entries);
-    var fragment = document.createDocumentFragment();
     var wrongCount = Object.keys(wrongWords).length;
+
+    populateListFilter(entries);
+    var visibleEntries = getVisibleEntries(entries);
 
     refs.wrongModuleCount.textContent = String(wrongCount);
     refs.favoriteModuleCount.textContent = String(favorites.size);
@@ -247,23 +402,22 @@
     refs.collectionVisibleCount.textContent = String(visibleEntries.length);
     refs.collectionTestLink.classList.toggle('is-disabled', entries.length === 0);
     refs.collectionTestLink.setAttribute('aria-disabled', String(entries.length === 0));
+    if (refs.wrongExportButton) refs.wrongExportButton.disabled = entries.length === 0;
 
-    visibleEntries.forEach(function (entry, index) {
-      fragment.appendChild(renderEntry(entry, index));
-    });
-    refs.collectionList.replaceChildren(fragment);
+    updateFrequencySummary(entries);
+    renderEntries(visibleEntries);
     updateEmptyState(entries.length, visibleEntries.length);
   }
 
-  function showRemovalNotice(entry) {
+  function showNotice(message, canUndo) {
     window.clearTimeout(noticeTimer);
     refs.libraryNotice.hidden = false;
-    refs.libraryNoticeText.textContent =
-      entry.word + (libraryType === 'favorite' ? ' 已取消收藏' : ' 已移出错题本');
+    refs.libraryNoticeText.textContent = message;
+    refs.libraryUndoButton.hidden = !canUndo;
     noticeTimer = window.setTimeout(function () {
       refs.libraryNotice.hidden = true;
-      lastRemoval = null;
-    }, 6000);
+      if (!canUndo) lastRemoval = null;
+    }, canUndo ? 6000 : 5000);
   }
 
   function removeEntry(entry) {
@@ -283,7 +437,10 @@
 
     saveCollections();
     render();
-    showRemovalNotice(entry);
+    showNotice(
+      entry.word + (libraryType === 'favorite' ? ' 已取消收藏' : ' 已移出错题本'),
+      true
+    );
   }
 
   function undoRemoval() {
@@ -300,6 +457,128 @@
     refs.libraryNotice.hidden = true;
     saveCollections();
     render();
+  }
+
+  function getLatestTimestamp(left, right) {
+    var leftTime = new Date(left || 0).getTime() || 0;
+    var rightTime = new Date(right || 0).getTime() || 0;
+    return leftTime >= rightTime ? cleanTimestamp(left) : cleanTimestamp(right);
+  }
+
+  function mergeWrongRecord(localRecord, importedRecord) {
+    var local = normalizeWrongRecord(localRecord);
+    var imported = normalizeWrongRecord(importedRecord);
+    var merged = {
+      count: Math.max(local.count, imported.count)
+    };
+    var latestWrong = getLatestTimestamp(local.lastWrongAt, imported.lastWrongAt);
+    var latestManual = getLatestTimestamp(local.addedManuallyAt, imported.addedManuallyAt);
+
+    if (latestWrong) merged.lastWrongAt = latestWrong;
+    if (latestManual) merged.addedManuallyAt = latestManual;
+    return merged;
+  }
+
+  function exportWrongWords() {
+    var records = getCollectionEntries().map(function (entry) {
+      var record = normalizeWrongRecord(wrongWords[entry.id]);
+      return {
+        id: entry.id,
+        word: entry.word,
+        meaning: entry.meaning,
+        list: entry.list,
+        index: entry.index,
+        count: record.count,
+        lastWrongAt: record.lastWrongAt || null,
+        addedManuallyAt: record.addedManuallyAt || null
+      };
+    });
+
+    if (!records.length) {
+      showNotice('错题本为空，暂无可导出的记录。', false);
+      return;
+    }
+
+    try {
+      var payload = {
+        schema: EXPORT_SCHEMA,
+        version: EXPORT_VERSION,
+        exportedAt: new Date().toISOString(),
+        wrongWords: records
+      };
+      var blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: 'application/json;charset=utf-8'
+      });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download =
+        'vocabulary-wrong-book-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 0);
+      showNotice('已导出 ' + records.length + ' 条错题，可在其他设备导入。', false);
+    } catch (error) {
+      showNotice('导出失败，请检查浏览器的下载权限后重试。', false);
+    }
+  }
+
+  function readFileAsText(file) {
+    if (file && typeof file.text === 'function') return file.text();
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve(String(reader.result || '')); };
+      reader.onerror = function () { reject(reader.error); };
+      reader.readAsText(file);
+    });
+  }
+
+  function parseImportPayload(text) {
+    var payload = JSON.parse(text);
+    if (
+      !payload ||
+      payload.schema !== EXPORT_SCHEMA ||
+      Number(payload.version) !== EXPORT_VERSION ||
+      !Array.isArray(payload.wrongWords)
+    ) {
+      throw new Error('unsupported');
+    }
+    return payload.wrongWords;
+  }
+
+  function importWrongWords(file) {
+    if (!file) return;
+
+    readFileAsText(file).then(function (text) {
+      var records = parseImportPayload(text);
+      var importedIds = new Set();
+      var changed = 0;
+
+      records.forEach(function (record) {
+        if (!record || !entryById.has(record.id) || importedIds.has(record.id)) return;
+        importedIds.add(record.id);
+        var before = wrongWords[record.id]
+          ? JSON.stringify(normalizeWrongRecord(wrongWords[record.id]))
+          : '';
+        wrongWords[record.id] = mergeWrongRecord(wrongWords[record.id], record);
+        if (before !== JSON.stringify(wrongWords[record.id])) changed += 1;
+      });
+
+      if (!importedIds.size) throw new Error('empty');
+      saveCollections();
+      render();
+      showNotice(
+        '已读取 ' + importedIds.size + ' 条记录，合并更新 ' + changed + ' 条；原有错题未被覆盖。',
+        false
+      );
+    }).catch(function () {
+      showNotice('导入失败：请选择由本错题本导出的 JSON 文件。', false);
+    }).finally(function () {
+      refs.wrongImportInput.value = '';
+    });
   }
 
   function speakWord(entry, button) {
@@ -338,6 +617,17 @@
         event.preventDefault();
       }
     });
+
+    if (libraryType === 'wrong' && refs.wrongDataActions) {
+      refs.wrongExportButton.addEventListener('click', exportWrongWords);
+      refs.wrongImportButton.addEventListener('click', function () {
+        refs.wrongImportInput.click();
+      });
+      refs.wrongImportInput.addEventListener('change', function () {
+        importWrongWords(refs.wrongImportInput.files && refs.wrongImportInput.files[0]);
+      });
+    }
+
     window.addEventListener('storage', function (event) {
       if (event.key !== STORAGE_KEYS.favorites && event.key !== STORAGE_KEYS.wrong) return;
       loadCollections();
@@ -355,7 +645,6 @@
     }
 
     loadCollections();
-    populateListFilter();
     bindEvents();
     render();
   }
