@@ -138,6 +138,16 @@ const checks = [
       files.wrongPage.includes('id="wrongFrequencySummary"')
   },
   {
+    name: 'wrong-book focused testing supports all wrong words or one populated List',
+    pass:
+      files.app.includes('wrongListNumber') &&
+      files.app.includes('getWrongListNumbers') &&
+      files.app.includes("'全部错题 · '") &&
+      files.app.includes("' 个错词'") &&
+      files.app.includes("state.scope === 'favorite'") &&
+      files.app.includes("WRONG_BOOK · LIST ")
+  },
+  {
     name: 'browser speech synthesis is wired to the word reader',
     pass:
       files.app.includes('SpeechSynthesisUtterance') &&

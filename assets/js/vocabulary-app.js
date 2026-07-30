@@ -51,6 +51,9 @@
     scope: requestedScope ||
       storedSession && normalizeScope(storedSession.scope) ||
       'list',
+    wrongListNumber: normalizeWrongListNumber(
+      storedSession && storedSession.wrongListNumber
+    ),
     deck: [],
     position: 0,
     answers: Object.create(null),
@@ -137,6 +140,13 @@
     return ['list', 'wrong', 'favorite'].indexOf(scope) !== -1 ? scope : '';
   }
 
+  function normalizeWrongListNumber(value) {
+    if (value === 'all' || value === undefined || value === null || value === '') {
+      return 'all';
+    }
+    return clampListNumber(value);
+  }
+
   function getRequestedScope() {
     try {
       var scope = new URLSearchParams(window.location.search).get('scope');
@@ -188,6 +198,7 @@
       listNumber: state.listNumber,
       mode: state.mode,
       scope: state.scope,
+      wrongListNumber: state.wrongListNumber,
       currentEntryId: currentEntry ? currentEntry.id : '',
       position: state.position,
       completed: state.completed,
@@ -222,6 +233,7 @@
       return false;
     }
 
+    normalizeWrongListSelection();
     state.deck = getDeck();
     state.answers = Object.create(null);
     state.completed = Boolean(snapshot.completed && state.deck.length);
@@ -324,6 +336,29 @@
 
   function renderListOptions() {
     refs.listSelect.innerHTML = '';
+
+    if (state.scope === 'wrong') {
+      normalizeWrongListSelection();
+      var wrongEntries = getWrongEntries();
+      var wrongListNumbers = getWrongListNumbers(wrongEntries);
+      var allOption = document.createElement('option');
+      allOption.value = 'all';
+      allOption.textContent = '全部错题 · ' + wrongEntries.length + ' 词';
+      refs.listSelect.appendChild(allOption);
+
+      wrongListNumbers.forEach(function (listNumber) {
+        var option = document.createElement('option');
+        var count = wrongEntries.filter(function (entry) {
+          return entry.list === listNumber;
+        }).length;
+        option.value = String(listNumber);
+        option.textContent = 'List ' + listNumber + ' · ' + count + ' 个错词';
+        refs.listSelect.appendChild(option);
+      });
+      refs.listSelect.value = String(state.wrongListNumber);
+      return;
+    }
+
     lists.forEach(function (list) {
       var option = document.createElement('option');
       option.value = String(list.list);
@@ -333,10 +368,33 @@
     refs.listSelect.value = String(state.listNumber);
   }
 
+  function getWrongEntries() {
+    return allEntries.filter(function (entry) {
+      return Boolean(wrongWords[entry.id]);
+    });
+  }
+
+  function getWrongListNumbers(entries) {
+    return Array.from(new Set(entries.map(function (entry) {
+      return entry.list;
+    }))).sort(function (left, right) {
+      return left - right;
+    });
+  }
+
+  function normalizeWrongListSelection() {
+    if (state.wrongListNumber === 'all') return;
+    var available = getWrongListNumbers(getWrongEntries());
+    if (available.indexOf(Number(state.wrongListNumber)) === -1) {
+      state.wrongListNumber = 'all';
+    }
+  }
+
   function getDeck() {
     if (state.scope === 'wrong') {
-      return allEntries.filter(function (entry) {
-        return Boolean(wrongWords[entry.id]);
+      return getWrongEntries().filter(function (entry) {
+        return state.wrongListNumber === 'all' ||
+          entry.list === Number(state.wrongListNumber);
       });
     }
 
@@ -380,6 +438,10 @@
       return;
     }
 
+    if (state.scope === 'wrong') {
+      normalizeWrongListSelection();
+      renderListOptions();
+    }
     state.deck = getDeck();
     if (state.deck.length === 0) {
       state.position = 0;
@@ -457,14 +519,28 @@
   function updateControlState() {
     var currentList = listByNumber.get(state.listNumber);
     var currentCount = currentList ? currentList.entries.length : 0;
+    var wrongEntries = getWrongEntries();
+    var wrongListNumbers = getWrongListNumbers(wrongEntries);
+    var selectedWrongCount = state.wrongListNumber === 'all'
+      ? wrongEntries.length
+      : wrongEntries.filter(function (entry) {
+        return entry.list === Number(state.wrongListNumber);
+      }).length;
     var answeredTotal = state.correct + state.wrong;
     var accuracy = answeredTotal ? Math.round((state.correct / answeredTotal) * 100) + '%' : '--';
 
-    refs.listSelect.value = String(state.listNumber);
-    refs.listSelect.disabled = state.scope !== 'list';
+    refs.listSelect.value = state.scope === 'wrong'
+      ? String(state.wrongListNumber)
+      : String(state.listNumber);
+    refs.listSelect.disabled = state.scope === 'favorite';
     refs.listCount.textContent = state.scope === 'list'
       ? '当前词表共 ' + currentCount + ' 个词'
-      : '专项词库覆盖全部 61 个 List';
+      : state.scope === 'wrong'
+        ? state.wrongListNumber === 'all'
+          ? '错题本共 ' + wrongEntries.length + ' 个词 · 分布在 ' +
+            wrongListNumbers.length + ' 个 List'
+          : 'List ' + state.wrongListNumber + ' · 共 ' + selectedWrongCount + ' 个错词'
+        : '收藏夹覆盖全部 61 个 List';
     refs.currentListCount.textContent = String(currentCount);
     updateCollectionControls(getCurrentEntry());
     refs.sessionCorrect.textContent = String(state.correct);
@@ -495,7 +571,9 @@
     var current = entry ? state.position + 1 : 0;
     var percent = total ? Math.round((current / total) * 100) : 0;
     var scopeLabel = state.scope === 'wrong'
-      ? 'WRONG_BOOK'
+      ? state.wrongListNumber === 'all'
+        ? 'WRONG_BOOK · ALL_LISTS'
+        : 'WRONG_BOOK · LIST ' + String(state.wrongListNumber).padStart(2, '0')
       : state.scope === 'favorite'
         ? 'FAVORITES'
         : 'LIST ' + String(state.listNumber).padStart(2, '0');
@@ -902,6 +980,7 @@
   function setScope(scope) {
     if (['list', 'wrong', 'favorite'].indexOf(scope) === -1) return;
     state.scope = scope;
+    renderListOptions();
     resetRound({ scroll: true });
   }
 
@@ -930,6 +1009,13 @@
 
   function bindEvents() {
     refs.listSelect.addEventListener('change', function () {
+      if (state.scope === 'wrong') {
+        state.wrongListNumber = refs.listSelect.value === 'all'
+          ? 'all'
+          : clampListNumber(refs.listSelect.value);
+        resetRound({ scroll: true });
+        return;
+      }
       state.listNumber = clampListNumber(refs.listSelect.value);
       state.scope = 'list';
       savePreferences();
