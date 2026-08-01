@@ -148,6 +148,13 @@ const checks = [
       files.app.includes("WRONG_BOOK · LIST ")
   },
   {
+    name: 'hidden empty and summary states cannot override the active quiz view',
+    pass:
+      files.css.includes('.vocab-empty-state[hidden]') &&
+      files.css.includes('.vocab-summary[hidden]') &&
+      files.css.includes('display: none !important;')
+  },
+  {
     name: 'browser speech synthesis is wired to the word reader',
     pass:
       files.app.includes('SpeechSynthesisUtterance') &&
