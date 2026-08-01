@@ -3739,6 +3739,11 @@ td.occ {
   text-align: center;
 }
 
+.vocab-empty-state[hidden],
+.vocab-summary[hidden] {
+  display: none !important;
+}
+
 .vocab-empty-code,
 .vocab-summary-kicker {
   padding: 4px 8px;
