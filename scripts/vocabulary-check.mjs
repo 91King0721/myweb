@@ -148,6 +148,20 @@ const checks = [
       files.app.includes("WRONG_BOOK · LIST ")
   },
   {
+    name: 'wrong-book supports shuffled testing for all wrong words or multiple selected Lists',
+    pass:
+      files.wrongPage.includes('id="wrongShufflePanel"') &&
+      files.wrongPage.includes('id="wrongShuffleListOptions"') &&
+      files.wrongPage.includes('id="wrongShuffleSelectedButton"') &&
+      files.library.includes('createWrongShuffleHref') &&
+      files.library.includes("wrongLists=' +") &&
+      files.app.includes('requestedWrongQuiz') &&
+      files.app.includes('wrongShuffleLists') &&
+      files.app.includes('shuffleSeed') &&
+      files.app.includes('shuffled(wrongDeck') &&
+      files.css.includes('.vocab-wrong-shuffle-lists')
+  },
+  {
     name: 'hidden empty and summary states cannot override the active quiz view',
     pass:
       files.css.includes('.vocab-empty-state[hidden]') &&

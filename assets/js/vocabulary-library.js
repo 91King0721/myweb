@@ -3,6 +3,7 @@
  * - 错题本 / 单词收藏分别查看
  * - 搜索、动态 List 筛选、朗读、移除与撤销
  * - 错题次数分级、排序、导出与合并导入
+ * - 全部错题或多个 List 错题混合乱序测试
  * - 与测试页共享 localStorage 数据，兼容 v0.4 已有记录
  */
 (function () {
@@ -102,6 +103,14 @@
       'collectionEmptyTitle',
       'collectionEmptyDescription',
       'collectionTestLink',
+      'wrongShufflePanel',
+      'wrongShuffleAllLink',
+      'wrongShuffleAllCount',
+      'wrongShuffleListOptions',
+      'wrongShuffleSelectionSummary',
+      'wrongShuffleSelectedButton',
+      'wrongShuffleSelectAll',
+      'wrongShuffleClear',
       'libraryNotice',
       'libraryNoticeText',
       'libraryUndoButton',
@@ -153,6 +162,112 @@
         left.list - right.list ||
         left.index - right.index;
     });
+  }
+
+  function getWrongListGroups(entries) {
+    var groups = new Map();
+
+    entries.forEach(function (entry) {
+      groups.set(entry.list, (groups.get(entry.list) || 0) + 1);
+    });
+
+    return Array.from(groups.entries()).sort(function (left, right) {
+      return left[0] - right[0];
+    });
+  }
+
+  function getSelectedWrongShuffleLists() {
+    if (!refs.wrongShuffleListOptions) return [];
+
+    return Array.prototype.map.call(
+      refs.wrongShuffleListOptions.querySelectorAll('input:checked'),
+      function (input) { return Number(input.value); }
+    ).filter(function (listNumber) {
+      return Number.isInteger(listNumber);
+    }).sort(function (left, right) {
+      return left - right;
+    });
+  }
+
+  function createWrongShuffleHref(listValue) {
+    var roundId = Date.now().toString(36) +
+      Math.floor(Math.random() * 1679616).toString(36).padStart(4, '0');
+    return 'vocabulary.html?scope=wrong&shuffle=1&wrongLists=' +
+      String(listValue) + '&round=' + roundId;
+  }
+
+  function updateWrongShuffleSelectionSummary() {
+    if (!refs.wrongShuffleListOptions) return;
+
+    var checked = refs.wrongShuffleListOptions.querySelectorAll('input:checked');
+    var selectedWords = Array.prototype.reduce.call(checked, function (total, input) {
+      return total + Math.max(0, Number(input.dataset.count) || 0);
+    }, 0);
+    var selectedLists = getSelectedWrongShuffleLists();
+    var hasSelection = selectedLists.length > 0;
+
+    refs.wrongShuffleSelectionSummary.textContent = hasSelection
+      ? '已选 ' + selectedLists.length + ' 个 List · 共 ' + selectedWords + ' 个错词'
+      : '请选择至少一个 List';
+    refs.wrongShuffleSelectedButton.disabled = !hasSelection;
+    refs.wrongShuffleSelectedButton.dataset.href = hasSelection
+      ? createWrongShuffleHref(selectedLists.join(','))
+      : '';
+  }
+
+  function renderWrongShuffleControls(entries) {
+    if (libraryType !== 'wrong' || !refs.wrongShufflePanel) return;
+
+    var selected = new Set(getSelectedWrongShuffleLists());
+    var groups = getWrongListGroups(entries);
+    var fragment = document.createDocumentFragment();
+    var hasEntries = entries.length > 0;
+
+    groups.forEach(function (group) {
+      var listNumber = group[0];
+      var count = group[1];
+      var label = document.createElement('label');
+      var input = document.createElement('input');
+      var listName = document.createElement('span');
+      var wordCount = document.createElement('b');
+
+      label.className = 'vocab-wrong-shuffle-list';
+      input.type = 'checkbox';
+      input.value = String(listNumber);
+      input.dataset.count = String(count);
+      input.checked = selected.has(listNumber);
+      input.addEventListener('change', updateWrongShuffleSelectionSummary);
+      listName.textContent = 'List ' + String(listNumber).padStart(2, '0');
+      wordCount.textContent = count + ' 词';
+      label.appendChild(input);
+      label.appendChild(listName);
+      label.appendChild(wordCount);
+      fragment.appendChild(label);
+    });
+
+    refs.wrongShuffleListOptions.replaceChildren(fragment);
+    refs.wrongShuffleAllCount.textContent = String(entries.length);
+    refs.wrongShuffleAllLink.href = createWrongShuffleHref('all');
+    refs.wrongShuffleAllLink.classList.toggle('is-disabled', !hasEntries);
+    refs.wrongShuffleAllLink.setAttribute('aria-disabled', String(!hasEntries));
+    refs.wrongShuffleSelectAll.disabled = !hasEntries;
+    refs.wrongShuffleClear.disabled = !hasEntries;
+
+    if (!hasEntries) {
+      refs.wrongShuffleListOptions.innerHTML =
+        '<p class="vocab-wrong-shuffle-empty">暂无错题，完成测试后这里会自动出现可选 List。</p>';
+    }
+    updateWrongShuffleSelectionSummary();
+  }
+
+  function setWrongShuffleLists(checked) {
+    if (!refs.wrongShuffleListOptions) return;
+
+    Array.prototype.forEach.call(
+      refs.wrongShuffleListOptions.querySelectorAll('input[type="checkbox"]'),
+      function (input) { input.checked = checked; }
+    );
+    updateWrongShuffleSelectionSummary();
   }
 
   function populateListFilter(entries) {
@@ -405,6 +520,7 @@
     if (refs.wrongExportButton) refs.wrongExportButton.disabled = entries.length === 0;
 
     updateFrequencySummary(entries);
+    renderWrongShuffleControls(entries);
     renderEntries(visibleEntries);
     updateEmptyState(entries.length, visibleEntries.length);
   }
@@ -617,6 +733,25 @@
         event.preventDefault();
       }
     });
+
+    if (libraryType === 'wrong' && refs.wrongShufflePanel) {
+      refs.wrongShuffleAllLink.addEventListener('click', function (event) {
+        if (refs.wrongShuffleAllLink.classList.contains('is-disabled')) {
+          event.preventDefault();
+        }
+      });
+      refs.wrongShuffleSelectAll.addEventListener('click', function () {
+        setWrongShuffleLists(true);
+      });
+      refs.wrongShuffleClear.addEventListener('click', function () {
+        setWrongShuffleLists(false);
+      });
+      refs.wrongShuffleSelectedButton.addEventListener('click', function () {
+        var href = refs.wrongShuffleSelectedButton.dataset.href;
+        if (!href || refs.wrongShuffleSelectedButton.disabled) return;
+        window.location.href = href;
+      });
+    }
 
     if (libraryType === 'wrong' && refs.wrongDataActions) {
       refs.wrongExportButton.addEventListener('click', exportWrongWords);

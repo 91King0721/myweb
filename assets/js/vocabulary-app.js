@@ -2,6 +2,7 @@
  * 考研高频词测试终端
  * - 四选一 / 键入单词
  * - List 1-61 自由切换
+ * - 全部错题或多个 List 错题混合乱序测试
  * - 错题本、收藏夹、偏好和轻量进度存储在 localStorage
  * - 使用浏览器 SpeechSynthesis 朗读英文
  */
@@ -37,6 +38,7 @@
   var wrongWords = loadWrongWords();
   var preferences = loadPreferences();
   var requestedScope = getRequestedScope();
+  var requestedWrongQuiz = getRequestedWrongQuiz();
   var storedSession = loadSessionSnapshot();
   var collectionNoticeTimer = 0;
   var collectionPulseTimer = 0;
@@ -54,6 +56,17 @@
     wrongListNumber: normalizeWrongListNumber(
       storedSession && storedSession.wrongListNumber
     ),
+    wrongShuffle: Boolean(
+      requestedWrongQuiz ||
+      !requestedScope && storedSession && storedSession.wrongShuffle
+    ),
+    wrongShuffleLists: requestedWrongQuiz
+      ? requestedWrongQuiz.listNumbers
+      : normalizeWrongShuffleLists(storedSession && storedSession.wrongShuffleLists),
+    wrongShuffleRoundId: requestedWrongQuiz
+      ? requestedWrongQuiz.roundId
+      : String(storedSession && storedSession.wrongShuffleRoundId || '').slice(0, 24),
+    shuffleSeed: normalizeShuffleSeed(storedSession && storedSession.shuffleSeed),
     deck: [],
     position: 0,
     answers: Object.create(null),
@@ -147,6 +160,23 @@
     return clampListNumber(value);
   }
 
+  function normalizeWrongShuffleLists(value) {
+    if (value === 'all' || !Array.isArray(value)) return 'all';
+
+    return Array.from(new Set(value.map(function (listNumber) {
+      return Number(listNumber);
+    }).filter(function (listNumber) {
+      return Number.isInteger(listNumber) && listNumber >= 1 && listNumber <= 61;
+    }))).sort(function (left, right) {
+      return left - right;
+    });
+  }
+
+  function normalizeShuffleSeed(value) {
+    var seed = Number(value);
+    return Number.isInteger(seed) && seed > 0 ? seed >>> 0 : 0;
+  }
+
   function getRequestedScope() {
     try {
       var scope = new URLSearchParams(window.location.search).get('scope');
@@ -154,6 +184,44 @@
     } catch (error) {
       return '';
     }
+  }
+
+  function getRequestedWrongQuiz() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('scope') !== 'wrong' || params.get('shuffle') !== '1') {
+        return null;
+      }
+
+      var rawLists = String(params.get('wrongLists') || 'all').trim();
+      var roundId = String(params.get('round') || '').slice(0, 24);
+      if (!rawLists || rawLists === 'all') {
+        return { listNumbers: 'all', roundId: roundId };
+      }
+
+      var listNumbers = normalizeWrongShuffleLists(rawLists.split(','));
+      return {
+        listNumbers: Array.isArray(listNumbers) && listNumbers.length
+          ? listNumbers
+          : 'all',
+        roundId: roundId
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function sameWrongShuffleLists(left, right) {
+    var normalizedLeft = normalizeWrongShuffleLists(left);
+    var normalizedRight = normalizeWrongShuffleLists(right);
+
+    if (normalizedLeft === 'all' || normalizedRight === 'all') {
+      return normalizedLeft === normalizedRight;
+    }
+    return normalizedLeft.length === normalizedRight.length &&
+      normalizedLeft.every(function (listNumber, index) {
+        return listNumber === normalizedRight[index];
+      });
   }
 
   function compactAnswer(entry, answer) {
@@ -199,6 +267,10 @@
       mode: state.mode,
       scope: state.scope,
       wrongListNumber: state.wrongListNumber,
+      wrongShuffle: state.wrongShuffle,
+      wrongShuffleLists: state.wrongShuffleLists,
+      wrongShuffleRoundId: state.wrongShuffleRoundId,
+      shuffleSeed: state.shuffleSeed,
       currentEntryId: currentEntry ? currentEntry.id : '',
       position: state.position,
       completed: state.completed,
@@ -232,6 +304,27 @@
     if (!snapshot || (requestedScope && requestedScope !== normalizeScope(snapshot.scope))) {
       return false;
     }
+
+    if (requestedWrongQuiz && (
+      !snapshot.wrongShuffle ||
+      !sameWrongShuffleLists(snapshot.wrongShuffleLists, requestedWrongQuiz.listNumbers) ||
+      String(snapshot.wrongShuffleRoundId || '') !== requestedWrongQuiz.roundId
+    )) {
+      return false;
+    }
+
+    if (requestedScope === 'wrong' && !requestedWrongQuiz && snapshot.wrongShuffle) {
+      return false;
+    }
+
+    state.wrongShuffle = Boolean(snapshot.wrongShuffle && state.scope === 'wrong');
+    state.wrongShuffleLists = requestedWrongQuiz
+      ? requestedWrongQuiz.listNumbers
+      : normalizeWrongShuffleLists(snapshot.wrongShuffleLists);
+    state.wrongShuffleRoundId = requestedWrongQuiz
+      ? requestedWrongQuiz.roundId
+      : String(snapshot.wrongShuffleRoundId || '').slice(0, 24);
+    state.shuffleSeed = normalizeShuffleSeed(snapshot.shuffleSeed) || createShuffleSeed();
 
     normalizeWrongListSelection();
     state.deck = getDeck();
@@ -341,6 +434,20 @@
       normalizeWrongListSelection();
       var wrongEntries = getWrongEntries();
       var wrongListNumbers = getWrongListNumbers(wrongEntries);
+
+      if (state.wrongShuffle) {
+        var shuffleOption = document.createElement('option');
+        var shuffleEntries = getSelectedWrongEntries(wrongEntries);
+        shuffleOption.value = 'shuffle';
+        shuffleOption.textContent = state.wrongShuffleLists === 'all'
+          ? '乱序 · 全部错题 · ' + shuffleEntries.length + ' 词'
+          : '乱序 · ' + state.wrongShuffleLists.length + ' 个 List · ' +
+            shuffleEntries.length + ' 词';
+        refs.listSelect.appendChild(shuffleOption);
+        refs.listSelect.value = 'shuffle';
+        return;
+      }
+
       var allOption = document.createElement('option');
       allOption.value = 'all';
       allOption.textContent = '全部错题 · ' + wrongEntries.length + ' 词';
@@ -383,6 +490,17 @@
   }
 
   function normalizeWrongListSelection() {
+    if (state.wrongShuffle) {
+      if (state.wrongShuffleLists === 'all') return;
+      var availableLists = new Set(getWrongListNumbers(getWrongEntries()));
+      state.wrongShuffleLists = normalizeWrongShuffleLists(
+        state.wrongShuffleLists.filter(function (listNumber) {
+          return availableLists.has(listNumber);
+        })
+      );
+      return;
+    }
+
     if (state.wrongListNumber === 'all') return;
     var available = getWrongListNumbers(getWrongEntries());
     if (available.indexOf(Number(state.wrongListNumber)) === -1) {
@@ -390,12 +508,29 @@
     }
   }
 
+  function getSelectedWrongEntries(entries) {
+    var source = entries || getWrongEntries();
+
+    if (state.wrongShuffle) {
+      if (state.wrongShuffleLists === 'all') return source.slice();
+      var selectedLists = new Set(state.wrongShuffleLists);
+      return source.filter(function (entry) {
+        return selectedLists.has(entry.list);
+      });
+    }
+
+    return source.filter(function (entry) {
+      return state.wrongListNumber === 'all' ||
+        entry.list === Number(state.wrongListNumber);
+    });
+  }
+
   function getDeck() {
     if (state.scope === 'wrong') {
-      return getWrongEntries().filter(function (entry) {
-        return state.wrongListNumber === 'all' ||
-          entry.list === Number(state.wrongListNumber);
-      });
+      var wrongDeck = getSelectedWrongEntries(getWrongEntries());
+      return state.wrongShuffle
+        ? shuffled(wrongDeck, createRandom(state.shuffleSeed || createShuffleSeed()))
+        : wrongDeck;
     }
 
     if (state.scope === 'favorite') {
@@ -412,6 +547,9 @@
 
   function resetRound(options) {
     var config = options || {};
+    if (state.scope === 'wrong' && state.wrongShuffle && !config.preserveShuffle) {
+      state.shuffleSeed = createShuffleSeed();
+    }
     state.deck = getDeck();
     state.position = 0;
     state.answers = Object.create(null);
@@ -521,25 +659,28 @@
     var currentCount = currentList ? currentList.entries.length : 0;
     var wrongEntries = getWrongEntries();
     var wrongListNumbers = getWrongListNumbers(wrongEntries);
-    var selectedWrongCount = state.wrongListNumber === 'all'
-      ? wrongEntries.length
-      : wrongEntries.filter(function (entry) {
-        return entry.list === Number(state.wrongListNumber);
-      }).length;
+    var selectedWrongEntries = getSelectedWrongEntries(wrongEntries);
+    var selectedWrongCount = selectedWrongEntries.length;
     var answeredTotal = state.correct + state.wrong;
     var accuracy = answeredTotal ? Math.round((state.correct / answeredTotal) * 100) + '%' : '--';
 
     refs.listSelect.value = state.scope === 'wrong'
-      ? String(state.wrongListNumber)
+      ? state.wrongShuffle ? 'shuffle' : String(state.wrongListNumber)
       : String(state.listNumber);
-    refs.listSelect.disabled = state.scope === 'favorite';
+    refs.listSelect.disabled = state.scope === 'favorite' ||
+      state.scope === 'wrong' && state.wrongShuffle;
     refs.listCount.textContent = state.scope === 'list'
       ? '当前词表共 ' + currentCount + ' 个词'
       : state.scope === 'wrong'
-        ? state.wrongListNumber === 'all'
-          ? '错题本共 ' + wrongEntries.length + ' 个词 · 分布在 ' +
-            wrongListNumbers.length + ' 个 List'
-          : 'List ' + state.wrongListNumber + ' · 共 ' + selectedWrongCount + ' 个错词'
+        ? state.wrongShuffle
+          ? state.wrongShuffleLists === 'all'
+            ? '全部 ' + selectedWrongCount + ' 个错词已随机打乱'
+            : '已混合 ' + state.wrongShuffleLists.length + ' 个 List · 共 ' +
+              selectedWrongCount + ' 个错词'
+          : state.wrongListNumber === 'all'
+            ? '错题本共 ' + wrongEntries.length + ' 个词 · 分布在 ' +
+              wrongListNumbers.length + ' 个 List'
+            : 'List ' + state.wrongListNumber + ' · 共 ' + selectedWrongCount + ' 个错词'
         : '收藏夹覆盖全部 61 个 List';
     refs.currentListCount.textContent = String(currentCount);
     updateCollectionControls(getCurrentEntry());
@@ -571,9 +712,13 @@
     var current = entry ? state.position + 1 : 0;
     var percent = total ? Math.round((current / total) * 100) : 0;
     var scopeLabel = state.scope === 'wrong'
-      ? state.wrongListNumber === 'all'
-        ? 'WRONG_BOOK · ALL_LISTS'
-        : 'WRONG_BOOK · LIST ' + String(state.wrongListNumber).padStart(2, '0')
+      ? state.wrongShuffle
+        ? state.wrongShuffleLists === 'all'
+          ? 'WRONG_BOOK · SHUFFLE_ALL'
+          : 'WRONG_BOOK · SHUFFLE_' + state.wrongShuffleLists.length + '_LISTS'
+        : state.wrongListNumber === 'all'
+          ? 'WRONG_BOOK · ALL_LISTS'
+          : 'WRONG_BOOK · LIST ' + String(state.wrongListNumber).padStart(2, '0')
       : state.scope === 'favorite'
         ? 'FAVORITES'
         : 'LIST ' + String(state.listNumber).padStart(2, '0');
@@ -667,6 +812,20 @@
       hash = Math.imul(hash, 16777619);
     }
     return hash >>> 0;
+  }
+
+  function createShuffleSeed() {
+    try {
+      if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+        var values = new Uint32Array(1);
+        window.crypto.getRandomValues(values);
+        return values[0] || 1;
+      }
+    } catch (error) {
+      // Fall back to a small time-based seed when secure randomness is unavailable.
+    }
+
+    return (Date.now() ^ Math.floor(Math.random() * 0xFFFFFFFF)) >>> 0 || 1;
   }
 
   function createRandom(seed) {
@@ -980,6 +1139,9 @@
   function setScope(scope) {
     if (['list', 'wrong', 'favorite'].indexOf(scope) === -1) return;
     state.scope = scope;
+    state.wrongShuffle = false;
+    state.wrongShuffleLists = 'all';
+    state.wrongShuffleRoundId = '';
     renderListOptions();
     resetRound({ scroll: true });
   }
@@ -1010,6 +1172,9 @@
   function bindEvents() {
     refs.listSelect.addEventListener('change', function () {
       if (state.scope === 'wrong') {
+        state.wrongShuffle = false;
+        state.wrongShuffleLists = 'all';
+        state.wrongShuffleRoundId = '';
         state.wrongListNumber = refs.listSelect.value === 'all'
           ? 'all'
           : clampListNumber(refs.listSelect.value);

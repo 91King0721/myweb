@@ -4280,6 +4280,216 @@ td.occ {
   cursor: not-allowed;
 }
 
+.vocab-wrong-shuffle {
+  margin: 0 0 18px;
+  padding: clamp(20px, 3vw, 32px);
+  color: #ffffff;
+  background: #111111;
+  border: 1px solid #111111;
+  border-left: 8px solid var(--ef-accent);
+  box-shadow: 11px 11px 0 rgba(17, 17, 17, 0.1);
+}
+
+.vocab-wrong-shuffle-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+}
+
+.vocab-wrong-shuffle-intro > div > span,
+.vocab-wrong-shuffle-heading span,
+.vocab-wrong-shuffle-all > span {
+  color: var(--ef-accent);
+  font-family: var(--ef-font-mono);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.vocab-wrong-shuffle-intro h2 {
+  margin-top: 2px;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 950;
+  letter-spacing: -0.05em;
+}
+
+.vocab-wrong-shuffle-intro p {
+  margin-top: 3px;
+  color: #b7bcb3;
+  font-family: var(--ef-font-mono);
+  font-size: 10px;
+}
+
+.vocab-wrong-shuffle-all {
+  min-width: 240px;
+  min-height: 58px;
+  padding: 10px 16px;
+  display: grid;
+  align-content: center;
+  color: #111111;
+  background: var(--ef-accent);
+  border: 1px solid var(--ef-accent);
+  border-left: 7px solid #ffffff;
+  font-family: var(--ef-font-mono);
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.vocab-wrong-shuffle-all > span {
+  color: #5a6612;
+  font-size: 8px;
+}
+
+.vocab-wrong-shuffle-all.is-disabled {
+  color: #8c9188;
+  background: #dfe2da;
+  border-color: #dfe2da;
+  pointer-events: none;
+}
+
+.vocab-wrong-shuffle-picker {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #3b3b3b;
+}
+
+.vocab-wrong-shuffle-heading,
+.vocab-wrong-shuffle-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.vocab-wrong-shuffle-heading strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 16px;
+}
+
+.vocab-wrong-shuffle-shortcuts {
+  display: flex;
+  gap: 7px;
+}
+
+.vocab-wrong-shuffle-shortcuts button {
+  min-height: 38px;
+  padding: 7px 13px;
+  color: #ffffff;
+  background: #242424;
+  border: 1px solid #5c5c5c;
+  border-radius: 0;
+  font: inherit;
+  font-family: var(--ef-font-mono);
+  font-size: 9px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vocab-wrong-shuffle-shortcuts button:disabled {
+  color: #696d67;
+  border-color: #333333;
+  cursor: not-allowed;
+}
+
+.vocab-wrong-shuffle-lists {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.vocab-wrong-shuffle-list {
+  min-width: 0;
+  min-height: 50px;
+  padding: 9px 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  background: #1b1b1b;
+  border: 1px solid #4d4d4d;
+  cursor: pointer;
+  font-family: var(--ef-font-mono);
+  font-size: 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.vocab-wrong-shuffle-list:has(input:checked) {
+  color: #111111;
+  background: var(--ef-accent);
+  border-color: var(--ef-accent);
+  box-shadow: inset 5px 0 0 #ffffff;
+}
+
+.vocab-wrong-shuffle-list input {
+  width: 17px;
+  height: 17px;
+  accent-color: #111111;
+}
+
+.vocab-wrong-shuffle-list span {
+  min-width: 0;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.vocab-wrong-shuffle-list b {
+  color: #aeb3aa;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.vocab-wrong-shuffle-list:has(input:checked) b {
+  color: #4f590f;
+}
+
+.vocab-wrong-shuffle-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #3b3b3b;
+}
+
+.vocab-wrong-shuffle-footer p,
+.vocab-wrong-shuffle-empty {
+  color: #b7bcb3;
+  font-family: var(--ef-font-mono);
+  font-size: 10px;
+}
+
+.vocab-wrong-shuffle-footer button {
+  min-width: 230px;
+  min-height: 50px;
+  padding: 11px 16px;
+  color: #111111;
+  background: var(--ef-accent);
+  border: 0;
+  border-left: 7px solid #ffffff;
+  border-radius: 0;
+  font: inherit;
+  font-family: var(--ef-font-mono);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.vocab-wrong-shuffle-footer button:disabled {
+  color: #797e76;
+  background: #dfe2da;
+  border-left-color: #777c74;
+  cursor: not-allowed;
+}
+
+.vocab-wrong-shuffle-empty {
+  grid-column: 1 / -1;
+  padding: 18px;
+  text-align: center;
+  border: 1px dashed #4b4b4b;
+}
+
 .vocab-library-modules {
   margin: 28px 0 18px;
   display: grid;
@@ -4907,6 +5117,17 @@ body[data-library="wrong"] .vocab-library-module.active > b {
     color: #ffffff;
     background: #111111;
   }
+
+  .vocab-wrong-shuffle-all:not(.is-disabled):hover,
+  .vocab-wrong-shuffle-footer button:not(:disabled):hover {
+    background: #ffffff;
+  }
+
+  .vocab-wrong-shuffle-shortcuts button:not(:disabled):hover {
+    color: #111111;
+    background: var(--ef-accent);
+    border-color: var(--ef-accent);
+  }
 }
 
 @media (max-width: 900px) {
@@ -4944,6 +5165,21 @@ body[data-library="wrong"] .vocab-library-module.active > b {
 
   .vocab-library-test-link {
     width: 100%;
+  }
+
+  .vocab-wrong-shuffle {
+    padding: 18px 15px;
+    box-shadow: 7px 7px 0 rgba(17, 17, 17, 0.1);
+  }
+
+  .vocab-wrong-shuffle-intro {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .vocab-wrong-shuffle-all {
+    width: 100%;
+    min-width: 0;
   }
 
   .vocab-library-modules {
@@ -4984,6 +5220,25 @@ body[data-library="wrong"] .vocab-library-module.active > b {
 }
 
 @media (max-width: 520px) {
+  .vocab-wrong-shuffle-heading,
+  .vocab-wrong-shuffle-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .vocab-wrong-shuffle-shortcuts,
+  .vocab-wrong-shuffle-footer button {
+    width: 100%;
+  }
+
+  .vocab-wrong-shuffle-shortcuts button {
+    flex: 1 1 0;
+  }
+
+  .vocab-wrong-shuffle-lists {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .vocab-library-module {
     grid-template-columns: auto minmax(0, 1fr);
     gap: 12px;
@@ -5019,6 +5274,12 @@ body[data-library="wrong"] .vocab-library-module.active > b {
 
   .vocab-wrong-data-actions p {
     grid-column: 1;
+  }
+}
+
+@media (max-width: 360px) {
+  .vocab-wrong-shuffle-lists {
+    grid-template-columns: 1fr;
   }
 }
 

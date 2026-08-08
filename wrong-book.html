@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <meta name="theme-color" content="#f4f5ef">
   <title>// WRONG_BOOK - 单词错题本</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=0.4.3">
   <link rel="preload" as="image" href="assets/images/industrial-desktop.webp" type="image/webp" media="(min-width: 769px)">
   <link rel="preload" as="image" href="assets/images/industrial-mobile.webp" type="image/webp" media="(max-width: 768px)">
   <link rel="preload" as="script" href="assets/js/vocabulary-data.js">
-  <link rel="preload" as="script" href="assets/js/vocabulary-library.js">
+  <link rel="preload" as="script" href="assets/js/vocabulary-library.js?v=0.4.3">
   <link rel="prefetch" as="document" href="favorites.html">
   <link rel="prefetch" as="document" href="vocabulary.html">
 </head>
@@ -48,6 +48,51 @@
         开始错题专项测试 →
       </a>
     </header>
+
+    <section class="vocab-wrong-shuffle" id="wrongShufflePanel" aria-labelledby="wrongShuffleTitle">
+      <div class="vocab-wrong-shuffle-intro">
+        <div>
+          <span>MODULE 02 / RANDOM</span>
+          <h2 id="wrongShuffleTitle">错题乱序测试</h2>
+          <p>// 打乱全部错题，或选择多个 List 后混合测试</p>
+        </div>
+        <a
+          class="vocab-wrong-shuffle-all"
+          id="wrongShuffleAllLink"
+          href="vocabulary.html?scope=wrong&amp;shuffle=1&amp;wrongLists=all"
+        >
+          <span>SHUFFLE_ALL</span>
+          全部错题乱序 · <b id="wrongShuffleAllCount">0</b> 词 →
+        </a>
+      </div>
+
+      <div class="vocab-wrong-shuffle-picker">
+        <div class="vocab-wrong-shuffle-heading">
+          <div>
+            <span>SELECT_LISTS</span>
+            <strong>选择参加乱序测试的 List</strong>
+          </div>
+          <div class="vocab-wrong-shuffle-shortcuts">
+            <button type="button" id="wrongShuffleSelectAll">全选</button>
+            <button type="button" id="wrongShuffleClear">清空</button>
+          </div>
+        </div>
+
+        <div
+          class="vocab-wrong-shuffle-lists"
+          id="wrongShuffleListOptions"
+          role="group"
+          aria-label="选择参加乱序测试的 List"
+        ></div>
+
+        <div class="vocab-wrong-shuffle-footer">
+          <p id="wrongShuffleSelectionSummary" aria-live="polite">请选择至少一个 List</p>
+          <button type="button" id="wrongShuffleSelectedButton" disabled>
+            开始所选 List 乱序 →
+          </button>
+        </div>
+      </div>
+    </section>
 
     <nav class="vocab-library-modules" aria-label="我的词库模块">
       <a href="wrong-book.html" class="vocab-library-module active" aria-current="page">
@@ -149,6 +194,6 @@
 
   <script src="assets/js/transitions.js"></script>
   <script src="assets/js/vocabulary-data.js"></script>
-  <script src="assets/js/vocabulary-library.js"></script>
+  <script src="assets/js/vocabulary-library.js?v=0.4.3"></script>
 </body>
 </html>
