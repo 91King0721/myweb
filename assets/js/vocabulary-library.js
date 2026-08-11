@@ -768,6 +768,10 @@
       loadCollections();
       render();
     });
+    window.addEventListener('pageshow', function () {
+      loadCollections();
+      render();
+    });
   }
 
   function init() {

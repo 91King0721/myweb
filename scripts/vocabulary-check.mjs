@@ -6,8 +6,11 @@ const files = {
   page: readFileSync('vocabulary.html', 'utf8'),
   wrongPage: readFileSync('wrong-book.html', 'utf8'),
   favoritePage: readFileSync('favorites.html', 'utf8'),
+  learningPage: readFileSync('learning.html', 'utf8'),
   app: readFileSync('assets/js/vocabulary-app.js', 'utf8'),
   library: readFileSync('assets/js/vocabulary-library.js', 'utf8'),
+  learningCore: readFileSync('assets/js/vocabulary-learning-core.js', 'utf8'),
+  learningDashboard: readFileSync('assets/js/vocabulary-learning-dashboard.js', 'utf8'),
   data: readFileSync('assets/js/vocabulary-data.js', 'utf8'),
   css: readFileSync('assets/css/style.css', 'utf8')
 };
@@ -48,6 +51,7 @@ const checks = [
     name: 'the vocabulary page loads data and application scripts',
     pass:
       files.page.includes('assets/js/vocabulary-data.js') &&
+      files.page.includes('assets/js/vocabulary-learning-core.js') &&
       files.page.includes('assets/js/vocabulary-app.js')
   },
   {
@@ -63,6 +67,57 @@ const checks = [
       files.page.includes('data-mode="typing"') &&
       files.page.includes('data-scope="wrong"') &&
       files.page.includes('data-scope="favorite"')
+  },
+  {
+    name: 'Ebbinghaus review and today review are integrated into the quiz',
+    pass:
+      files.page.includes('data-scope="review"') &&
+      files.page.includes('id="todayReviewCount"') &&
+      files.app.includes("state.scope === 'review'") &&
+      files.app.includes('getDueEntries') &&
+      files.learningCore.includes('1 * DAY') &&
+      files.learningCore.includes('60 * DAY')
+  },
+  {
+    name: 'learning center shows proficiency, daily statistics, forgetting, and List mastery',
+    pass:
+      files.learningPage.includes('id="averageProficiency"') &&
+      files.learningPage.includes('id="todayAnswered"') &&
+      files.learningPage.includes('id="forgettingRate"') &&
+      files.learningPage.includes('id="listMasteryGrid"') &&
+      files.learningDashboard.includes('getProficiency') &&
+      files.learningDashboard.includes('getTodayStats') &&
+      files.learningDashboard.includes('getForgettingRate') &&
+      files.learningDashboard.includes('getListMastery')
+  },
+  {
+    name: 'recent seven-day curve is rendered from compact daily records',
+    pass:
+      files.learningPage.includes('id="weeklyChart"') &&
+      files.learningDashboard.includes('getDailySeries(dailyStats, 7, now)') &&
+      files.learningDashboard.includes('<polyline') &&
+      files.learningCore.includes('MAX_DAILY_RECORDS = 45')
+  },
+  {
+    name: 'today review quantity can be freely selected by the learner',
+    pass:
+      files.learningPage.includes('id="reviewLimit"') &&
+      files.learningPage.includes('type="number"') &&
+      files.learningPage.includes('id="reviewAllButton"') &&
+      files.learningDashboard.includes("scope=review&limit=") &&
+      files.app.includes('normalizeReviewLimit') &&
+      files.app.includes('.slice(0, state.reviewLimit)')
+  },
+  {
+    name: 'high-frequency and weighted smart wrong-word tests are available',
+    pass:
+      files.learningPage.includes('id="highFrequencyLink"') &&
+      files.learningPage.includes('id="weightedQuizForm"') &&
+      files.learningDashboard.includes('wrongMode=high') &&
+      files.learningDashboard.includes('wrongMode=weighted') &&
+      files.app.includes('getHighFrequencyEntries') &&
+      files.app.includes('weightedSample') &&
+      files.app.includes('wrongCount * wrongCount')
   },
   {
     name: 'wrong-book and favorites have prominent independent module entries',
@@ -114,7 +169,11 @@ const checks = [
       !files.app.includes('localStorage.clear') &&
       !files.app.includes('removeItem(') &&
       !files.library.includes('localStorage.clear') &&
-      !files.library.includes('removeItem(')
+      !files.library.includes('removeItem(') &&
+      !files.learningCore.includes('localStorage.clear') &&
+      !files.learningCore.includes('removeItem(') &&
+      !files.learningDashboard.includes('localStorage.clear') &&
+      !files.learningDashboard.includes('removeItem(')
   },
   {
     name: 'wrong-book supports JSON export and merge import',
@@ -182,7 +241,9 @@ const checks = [
       files.css.includes('@media (max-width: 600px)') &&
       files.css.includes('.vocabulary-shell') &&
       files.css.includes('.vocab-library-modules') &&
-      files.css.includes('.vocab-library-item')
+      files.css.includes('.vocab-library-item') &&
+      files.css.includes('.learning-dashboard-grid') &&
+      files.css.includes('.learning-mastery-grid')
   }
 ];
 

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <meta name="theme-color" content="#f4f5ef">
+  <title>// LEARNING_CENTER - 词汇学习进度</title>
+  <link rel="stylesheet" href="assets/css/style.css?v=0.5.0">
+  <link rel="preload" as="image" href="assets/images/industrial-desktop.webp" type="image/webp" media="(min-width: 769px)">
+  <link rel="preload" as="image" href="assets/images/industrial-mobile.webp" type="image/webp" media="(max-width: 768px)">
+  <link rel="preload" as="script" href="assets/js/vocabulary-data.js">
+  <link rel="preload" as="script" href="assets/js/vocabulary-learning-core.js?v=0.5.0">
+  <link rel="preload" as="script" href="assets/js/vocabulary-learning-dashboard.js?v=0.5.0">
+  <link rel="prefetch" as="document" href="vocabulary.html">
+  <link rel="prefetch" as="document" href="wrong-book.html">
+</head>
+<body class="query-page vocabulary-page learning-page">
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="vocabulary.html" class="nav-back" aria-label="返回单词测试">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+        &lt; 单词测试
+      </a>
+      <span class="nav-title">LEARNING_CENTER</span>
+      <ul class="nav-links">
+        <li><a href="wrong-book.html">// 错题本</a></li>
+        <li><a href="favorites.html">// 单词收藏</a></li>
+        <li><a href="vocabulary.html">// 单词测试</a></li>
+        <li><a href="index.html">// 首页</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main vocabulary-main learning-main">
+    <div class="query-band vocabulary-band">
+      <span>STUDY SYSTEM</span>
+      <strong>LEARNING_CENTER</strong>
+      <span>LOCAL ANALYTICS</span>
+    </div>
+
+    <header class="page-header vocabulary-header learning-header">
+      <div>
+        <span class="vocab-library-eyebrow">MODULE 03 / MEMORY</span>
+        <h1 class="page-title">艾宾浩斯复习中心</h1>
+        <p class="page-subtitle">// 今日任务 · 单词熟练度 · 每日统计 · 遗忘率 · LIST 掌握率</p>
+      </div>
+      <form class="learning-review-cta learning-review-form" id="reviewLaunchForm">
+        <span>TODAY_REVIEW · 共 <strong id="reviewCtaCount">0</strong> 词到期</span>
+        <label for="reviewLimit">本次复习</label>
+        <div>
+          <input type="number" id="reviewLimit" min="1" max="1826" step="1" value="20" inputmode="numeric">
+          <span>词</span>
+          <button type="button" id="reviewAllButton">全部到期</button>
+        </div>
+        <button type="submit" id="startReviewButton">开始今日复习 →</button>
+      </form>
+    </header>
+
+    <section class="learning-kpis" aria-label="学习总览">
+      <article class="learning-kpi learning-kpi-accent">
+        <span>DUE_NOW</span>
+        <strong id="dueNowCount">0</strong>
+        <small>当前到期复习</small>
+      </article>
+      <article class="learning-kpi">
+        <span>LEARNED</span>
+        <strong id="learnedCount">0</strong>
+        <small>已有学习记录</small>
+      </article>
+      <article class="learning-kpi">
+        <span>PROFICIENCY</span>
+        <strong><span id="averageProficiency">0</span>%</strong>
+        <small>平均单词熟练度</small>
+      </article>
+      <article class="learning-kpi learning-kpi-alert">
+        <span>FORGETTING</span>
+        <strong><span id="forgettingRate">0</span>%</strong>
+        <small>复习后再次答错占比</small>
+      </article>
+    </section>
+
+    <div class="learning-dashboard-grid">
+      <section class="learning-panel learning-today-panel" aria-labelledby="todayStatsTitle">
+        <div class="learning-panel-heading">
+          <div>
+            <span>DAILY_TEST</span>
+            <h2 id="todayStatsTitle">今日测试统计</h2>
+          </div>
+          <time id="todayDate"></time>
+        </div>
+        <dl class="learning-today-stats">
+          <div><dt>已答</dt><dd id="todayAnswered">0</dd></div>
+          <div><dt>正确</dt><dd id="todayCorrect">0</dd></div>
+          <div><dt>错误</dt><dd id="todayWrong">0</dd></div>
+          <div><dt>正确率</dt><dd><span id="todayAccuracy">0</span>%</dd></div>
+          <div><dt>复习题</dt><dd id="todayReviewed">0</dd></div>
+        </dl>
+        <p class="learning-schedule-note">
+          复习间隔：1 天 → 2 天 → 4 天 → 7 天 → 15 天 → 30 天 → 60 天；答错后次日重新复习。
+        </p>
+      </section>
+
+      <section class="learning-panel learning-smart-panel" aria-labelledby="smartTestTitle">
+        <div class="learning-panel-heading">
+          <div>
+            <span>SMART_TRAINING</span>
+            <h2 id="smartTestTitle">智能专项测试</h2>
+          </div>
+        </div>
+        <a class="learning-special-link learning-high-link" id="highFrequencyLink" href="vocabulary.html?scope=wrong&amp;shuffle=1&amp;wrongLists=all&amp;wrongMode=high">
+          <span>HIGH_FREQUENCY</span>
+          <strong>高频错词专项</strong>
+          <small>错误 3 次及以上 · <b id="highFrequencyCount">0</b> 词</small>
+          <i>→</i>
+        </a>
+        <form class="learning-weighted-form" id="weightedQuizForm">
+          <div>
+            <span>WEIGHTED_RANDOM</span>
+            <strong>按错误次数智能抽题</strong>
+            <small>做错越多，被抽中的概率越高</small>
+          </div>
+          <label for="smartQuizLimit">
+            <span>本轮题数</span>
+            <select id="smartQuizLimit">
+              <option value="10">10 词</option>
+              <option value="20">20 词</option>
+              <option value="30" selected>30 词</option>
+              <option value="50">50 词</option>
+              <option value="all">全部错词</option>
+            </select>
+          </label>
+          <button type="submit" id="smartQuizButton">开始智能抽题 →</button>
+        </form>
+      </section>
+
+      <section class="learning-panel learning-chart-panel" aria-labelledby="weeklyChartTitle">
+        <div class="learning-panel-heading">
+          <div>
+            <span>RECENT_7_DAYS</span>
+            <h2 id="weeklyChartTitle">最近 7 天曲线</h2>
+          </div>
+          <div class="learning-chart-legend"><span>答题</span><span>正确</span></div>
+        </div>
+        <div class="learning-chart" id="weeklyChart" role="img" aria-label="最近 7 天答题数和正确数曲线"></div>
+      </section>
+
+      <section class="learning-panel learning-queue-panel" aria-labelledby="reviewQueueTitle">
+        <div class="learning-panel-heading">
+          <div>
+            <span>TODAY_QUEUE</span>
+            <h2 id="reviewQueueTitle">今日复习</h2>
+          </div>
+          <span id="scheduledTodayCount">0 词</span>
+        </div>
+        <div class="learning-review-queue" id="reviewQueue"></div>
+        <p class="learning-empty-copy" id="reviewQueueEmpty" hidden>当前没有到期单词，完成新测试后会自动生成复习计划。</p>
+      </section>
+    </div>
+
+    <section class="learning-panel learning-mastery-panel" aria-labelledby="listMasteryTitle">
+      <div class="learning-panel-heading">
+        <div>
+          <span>LIST_MASTERY</span>
+          <h2 id="listMasteryTitle">List 掌握率</h2>
+        </div>
+        <p>掌握率按熟练度达到 80% 的单词计算</p>
+      </div>
+      <div class="learning-mastery-grid" id="listMasteryGrid"></div>
+    </section>
+
+    <p class="learning-storage-note">
+      学习记录按紧凑格式保存在本设备，仅保留最近 45 天统计；网页更新不会清空现有错题、收藏和进度。
+    </p>
+  </main>
+
+  <script src="assets/js/transitions.js"></script>
+  <script src="assets/js/vocabulary-data.js"></script>
+  <script src="assets/js/vocabulary-learning-core.js?v=0.5.0"></script>
+  <script src="assets/js/vocabulary-learning-dashboard.js?v=0.5.0"></script>
+</body>
+</html>
