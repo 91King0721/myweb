@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <meta name="theme-color" content="#f4f5ef">
   <title>// VOCAB_TERMINAL - 考研高频词测试</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=0.5.1">
+  <link rel="stylesheet" href="assets/css/style.css?v=0.5.0">
   <link rel="preload" as="image" href="assets/images/industrial-desktop.webp" type="image/webp" media="(min-width: 769px)">
   <link rel="preload" as="image" href="assets/images/industrial-mobile.webp" type="image/webp" media="(max-width: 768px)">
   <link rel="preload" as="script" href="assets/js/vocabulary-data.js">
   <link rel="preload" as="script" href="assets/js/vocabulary-learning-core.js?v=0.5.0">
-  <link rel="preload" as="script" href="assets/js/vocabulary-app.js?v=0.5.1">
+  <link rel="preload" as="script" href="assets/js/vocabulary-app.js?v=0.5.0">
   <link rel="prefetch" as="document" href="wrong-book.html">
   <link rel="prefetch" as="document" href="favorites.html">
+  <link rel="prefetch" as="document" href="learning.html">
   <link rel="prefetch" as="document" href="index.html">
 </head>
 <body class="query-page vocabulary-page">
@@ -26,7 +27,7 @@
       </a>
       <span class="nav-title">VOCAB_TERMINAL</span>
       <ul class="nav-links">
-        <li class="feature-learning" hidden><a href="learning.html">// 学习进度</a></li>
+        <li><a href="learning.html">// 学习进度</a></li>
         <li><a href="wrong-book.html">// 错题本</a></li>
         <li><a href="favorites.html">// 单词收藏</a></li>
         <li><a href="query.html">// 查询教室</a></li>
@@ -84,7 +85,7 @@
               <span>收藏夹</span>
               <strong id="favoriteCount">0</strong>
             </button>
-            <button type="button" class="feature-learning" data-scope="review" aria-pressed="false" hidden>
+            <button type="button" data-scope="review" aria-pressed="false">
               <span>今日复习</span>
               <strong id="todayReviewCount">0</strong>
             </button>
@@ -105,7 +106,7 @@
             <small>集中查看已收藏的重点单词</small>
             <b><span id="favoriteModuleCount">0</span> 个词 · 点击进入 →</b>
           </a>
-          <a href="learning.html" class="vocab-library-launcher vocab-library-launcher-learning feature-learning" hidden>
+          <a href="learning.html" class="vocab-library-launcher vocab-library-launcher-learning">
             <span class="vocab-library-launcher-code">LEARNING_CENTER</span>
             <strong>学习进度</strong>
             <small>今日复习、掌握率与 7 天趋势</small>
@@ -237,6 +238,6 @@
   <script src="assets/js/transitions.js"></script>
   <script src="assets/js/vocabulary-data.js"></script>
   <script src="assets/js/vocabulary-learning-core.js?v=0.5.0"></script>
-  <script src="assets/js/vocabulary-app.js?v=0.5.1"></script>
+  <script src="assets/js/vocabulary-app.js?v=0.5.0"></script>
 </body>
 </html>

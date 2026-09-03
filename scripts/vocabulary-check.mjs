@@ -55,10 +55,11 @@ const checks = [
       files.page.includes('assets/js/vocabulary-app.js')
   },
   {
-    name: 'the landing page keeps classroom access and adds vocabulary access',
+    name: 'the landing page keeps classroom access and hides vocabulary entry points',
     pass:
       files.index.includes('href="query.html"') &&
-      files.index.includes('href="vocabulary.html"')
+      !files.index.includes('href="vocabulary.html"') &&
+      !files.index.includes('启动单词测试')
   },
   {
     name: 'choice, typing, wrong-book, and favorite controls are present',
@@ -77,21 +78,6 @@ const checks = [
       files.app.includes('getDueEntries') &&
       files.learningCore.includes('1 * DAY') &&
       files.learningCore.includes('60 * DAY')
-  },
-  {
-    name: 'learning and today-review interfaces are temporarily hidden without deleting data logic',
-    pass:
-      files.page.includes('class="feature-learning" data-scope="review"') &&
-      files.page.includes('vocab-library-launcher-learning feature-learning') &&
-      files.page.includes('<li class="feature-learning" hidden><a href="learning.html">') &&
-      files.wrongPage.includes('<li class="feature-learning" hidden><a href="learning.html">') &&
-      files.favoritePage.includes('<li class="feature-learning" hidden><a href="learning.html">') &&
-      files.learningPage.includes("window.location.replace('vocabulary.html')") &&
-      files.learningPage.includes('learning-page" hidden') &&
-      files.css.includes('.feature-learning[hidden]') &&
-      files.app.includes('REVIEW_UI_ENABLED = false') &&
-      files.app.includes('if (!REVIEW_UI_ENABLED) return null') &&
-      files.learningCore.includes("progress: 'vocabularyLearningV1'")
   },
   {
     name: 'learning center shows proficiency, daily statistics, forgetting, and List mastery',
