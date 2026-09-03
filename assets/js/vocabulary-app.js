@@ -21,6 +21,7 @@
   var SESSION_VERSION = 1;
   var MAX_SESSION_CHARS = 48000;
   var MAX_STORED_ANSWERS = 800;
+  var REVIEW_UI_ENABLED = false;
   var learning = window.VocabularyLearning || null;
 
   var listByNumber = new Map();
@@ -194,7 +195,9 @@
   }
 
   function normalizeScope(scope) {
-    return ['list', 'wrong', 'favorite', 'review'].indexOf(scope) !== -1 ? scope : '';
+    var allowedScopes = ['list', 'wrong', 'favorite'];
+    if (REVIEW_UI_ENABLED) allowedScopes.push('review');
+    return allowedScopes.indexOf(scope) !== -1 ? scope : '';
   }
 
   function normalizeWrongQuizMode(value) {
@@ -239,7 +242,9 @@
   function getRequestedScope() {
     try {
       var scope = new URLSearchParams(window.location.search).get('scope');
-      return ['wrong', 'favorite', 'review'].indexOf(scope) !== -1 ? scope : '';
+      var allowedScopes = ['wrong', 'favorite'];
+      if (REVIEW_UI_ENABLED) allowedScopes.push('review');
+      return allowedScopes.indexOf(scope) !== -1 ? scope : '';
     } catch (error) {
       return '';
     }
@@ -275,6 +280,7 @@
   }
 
   function getRequestedReviewQuiz() {
+    if (!REVIEW_UI_ENABLED) return null;
     try {
       var params = new URLSearchParams(window.location.search);
       if (params.get('scope') !== 'review') return null;

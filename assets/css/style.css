@@ -23,6 +23,11 @@
   --nav-height: 52px;
 }
 
+/* Temporary feature switch: keep learning data/code intact while hiding its UI. */
+.feature-learning[hidden] {
+  display: none !important;
+}
+
 
 /* --- Reset & Base --- */
 *, *::before, *::after {

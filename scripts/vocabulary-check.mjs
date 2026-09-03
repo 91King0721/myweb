@@ -79,6 +79,21 @@ const checks = [
       files.learningCore.includes('60 * DAY')
   },
   {
+    name: 'learning and today-review interfaces are temporarily hidden without deleting data logic',
+    pass:
+      files.page.includes('class="feature-learning" data-scope="review"') &&
+      files.page.includes('vocab-library-launcher-learning feature-learning') &&
+      files.page.includes('<li class="feature-learning" hidden><a href="learning.html">') &&
+      files.wrongPage.includes('<li class="feature-learning" hidden><a href="learning.html">') &&
+      files.favoritePage.includes('<li class="feature-learning" hidden><a href="learning.html">') &&
+      files.learningPage.includes("window.location.replace('vocabulary.html')") &&
+      files.learningPage.includes('learning-page" hidden') &&
+      files.css.includes('.feature-learning[hidden]') &&
+      files.app.includes('REVIEW_UI_ENABLED = false') &&
+      files.app.includes('if (!REVIEW_UI_ENABLED) return null') &&
+      files.learningCore.includes("progress: 'vocabularyLearningV1'")
+  },
+  {
     name: 'learning center shows proficiency, daily statistics, forgetting, and List mastery',
     pass:
       files.learningPage.includes('id="averageProficiency"') &&
