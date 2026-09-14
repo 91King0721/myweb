@@ -2,7 +2,7 @@
  * 空闲教室查询 - 应用逻辑
  */
 
-var DAY_NAMES = ['周一', '周二', '周三', '周四', '周五'];
+var DAY_NAMES = DATA_META.dayNames;
 
 // --- 时间段分组 ---
 var PERIOD_GROUPS = {
@@ -74,20 +74,28 @@ function toggleDay(dayName) {
   render({ scrollToExpanded: true });
 }
 
-// --- 自动检测当前周（第1周周一 = 2026/3/9）---
-function getCurrentWeek() {
-  var week1Start = new Date(2026, 2, 9);
-  var today = new Date();
-  var diffDays = Math.floor((today - week1Start) / (1000 * 60 * 60 * 24));
-  var week = Math.floor(diffDays / 7) + 1;
-  return Math.max(1, Math.min(18, week));
+// --- 按教务系统学期起始日期和北京时间计算周次 ---
+function getBeijingDateParts() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(new Date()).reduce(function(parts, part) {
+    parts[part.type] = part.value;
+    return parts;
+  }, {});
 }
 
-// --- 获取当前星期名称，周末默认周一 ---
+function getCurrentWeek() {
+  var parts = getBeijingDateParts();
+  var today = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day));
+  var week1Start = Date.parse(DATA_META.week1Start + 'T00:00:00Z');
+  var week = Math.floor((today - week1Start) / (7 * 86400000)) + 1;
+  return Math.max(1, Math.min(DATA_META.weekCount, week));
+}
+
 function getCurrentDayName() {
-  var idx = new Date().getDay();
-  if (idx < 1 || idx > 5) return '周一';
-  return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][idx];
+  var parts = getBeijingDateParts();
+  var day = new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day))).getUTCDay();
+  return DAY_NAMES[(day + 6) % 7];
 }
 
 function isMobileViewport() {
@@ -250,7 +258,8 @@ function render(options) {
     html += '<span class="expand-icon">' + (isExpanded ? '▾' : '▸') + '</span>';
     html += '<span class="day-title">' + dname + ' <span class="day-date">' + day.date + '</span></span>';
     html += '</span>';
-    html += '<span class="free-info">空闲 <span class="free-num">' + periodFreeRooms.length + '</span><span class="free-sep">/</span><span class="free-total">' + rooms.length + '</span> 间</span>';
+    var freeCount = isAllPeriods ? rooms.filter(function(r) { return r.periods.some(function(p) { return p === 0; }); }).length : periodFreeRooms.length;
+    html += '<span class="free-info">' + (isAllPeriods ? '有空闲' : '所选时段空闲') + ' <span class="free-num">' + freeCount + '</span><span class="free-sep">/</span><span class="free-total">' + rooms.length + '</span> 间</span>';
     html += '</div>';
 
     if (isExpanded) {
@@ -274,6 +283,21 @@ function render(options) {
 // --- 初始化 ---
 function init() {
   if (!document.getElementById('weekSel') || typeof DATA === 'undefined') return;
+
+  // 教学楼和数据说明直接来自本次下载元信息。
+  var bldSel = document.getElementById('bldSel');
+  bldSel.textContent = '';
+  DATA_META.buildings.forEach(function(name) {
+    var option = document.createElement('option');
+    option.value = name;
+    option.textContent = name;
+    bldSel.appendChild(option);
+  });
+  var updated = new Date(DATA_META.updatedAt).toLocaleString('zh-CN', {
+    timeZone: 'Asia/Shanghai', hour12: false
+  });
+  document.getElementById('dataStatus').textContent = DATA_META.semesterLabel + ' · ' + DATA_META.campus +
+    ' · 第 1–' + DATA_META.weekCount + ' 周 · 周一至周日 · 更新：' + updated + '（北京时间）';
 
   // 自动选择当前周
   var weekSel = document.getElementById('weekSel');

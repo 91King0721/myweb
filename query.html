@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <title>// QUERY_TERMINAL - 空闲教室查询</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260914-classroom-only">
   <link rel="preload" as="image" href="assets/images/industrial-desktop.webp" type="image/webp" media="(min-width: 769px)">
   <link rel="preload" as="image" href="assets/images/industrial-mobile.webp" type="image/webp" media="(max-width: 768px)">
-  <link rel="preload" as="script" href="assets/js/data.js">
-  <link rel="preload" as="script" href="assets/js/app.js">
+  <link rel="preload" as="script" href="assets/js/data.js?v=20260914-autumn">
+  <link rel="preload" as="script" href="assets/js/app.js?v=20260914-autumn">
   <link rel="prefetch" as="document" href="index.html">
 </head>
 <body class="query-page">
@@ -25,7 +25,6 @@
       <ul class="nav-links">
         <li style="display:none"><a href="#">个人主页</a></li>
         <li><a href="index.html">// 首页</a></li>
-        <li><a href="vocabulary.html" class="nav-link-vocab">// 单词测试</a></li>
       </ul>
     </div>
   </nav>
@@ -40,8 +39,11 @@
     <!-- 页面标题 -->
     <div class="page-header">
       <h1 class="page-title">教室课表查询终端</h1>
-      <p class="page-subtitle">// RANGE: WEEK 01 ~ 18 · SELECT 教学楼 &amp; 时段 SCAN</p>
+      <p class="page-subtitle">// 东校区 · WEEK 01 ~ 18 · 周一至周日</p>
     </div>
+
+    <p id="dataStatus" class="page-subtitle" role="status"></p>
+    <p class="page-subtitle">教务系统下载快照，非实时数据；临时调课或借用请以教务系统为准。</p>
 
     <!-- 图例 -->
     <div class="legend">
@@ -140,8 +142,8 @@
     <div id="results"></div>
   </main>
 
-  <script src="assets/js/transitions.js"></script>
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/transitions.js?v=20260914-classroom-only"></script>
+  <script src="assets/js/data.js?v=20260914-autumn"></script>
+  <script src="assets/js/app.js?v=20260914-autumn"></script>
 </body>
 </html>
