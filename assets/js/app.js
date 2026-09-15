@@ -224,9 +224,9 @@ function render(options) {
     var day = days[dname];
     if (!day) continue;
 
-    // 容量不足 20 人的教室不开门，先排除再进行筛选与统计。
+    // 排除已知容量不足 20 人的教室；补充课表未提供容量时保留。
     var rooms = day.rooms.filter(function(r) {
-      return Number(r.seats) >= 20;
+      return r.seats === '—' || Number(r.seats) >= 20;
     });
 
     // 1. 文本搜索过滤

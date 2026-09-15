@@ -70,8 +70,8 @@
     addPrefetch(url.href, 'document');
 
     if (targetPath.indexOf('query.html') !== -1) {
-      addPrefetch('assets/js/data.js?v=20260914-autumn', 'script');
-      addPrefetch('assets/js/app.js?v=20260914-autumn', 'script');
+      addPrefetch('assets/js/data.js?v=20260916-computing-center', 'script');
+      addPrefetch('assets/js/app.js?v=20260916-computing-center', 'script');
     }
 
     addPrefetch('assets/images/industrial-desktop.webp', 'image', 'image/webp', '(min-width: 769px)');
