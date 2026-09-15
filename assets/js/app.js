@@ -224,8 +224,12 @@ function render(options) {
     var day = days[dname];
     if (!day) continue;
 
+    // 容量不足 20 人的教室不开门，先排除再进行筛选与统计。
+    var rooms = day.rooms.filter(function(r) {
+      return Number(r.seats) >= 20;
+    });
+
     // 1. 文本搜索过滤
-    var rooms = day.rooms;
     if (query) {
       rooms = rooms.filter(function(r) {
         return r.name.indexOf(query) !== -1;
