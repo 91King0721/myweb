@@ -1,0 +1,70 @@
+/* Quiet industrial glass: preserve typography and lime accents. */
+:root {
+  --glass-surface: rgba(255, 255, 255, .80);
+  --glass-border: rgba(255, 255, 255, .72);
+  --glass-shadow: 0 8px 32px rgba(24, 32, 42, .07), inset 0 1px 0 rgba(255, 255, 255, .8);
+  --wallpaper: url('../images/wallhaven-w5x2vr.jpg');
+}
+.grid-lines, .landing-page::after, .query-page::before,
+.page-transition-layer, .controls::after, .day-block::after { display: none; }
+.landing-page::before {
+  background: linear-gradient(90deg, rgba(250,249,245,.72) 0%, rgba(250,249,245,.52) 34%, rgba(250,249,245,0) 62%),
+    var(--wallpaper) center / cover no-repeat;
+}
+.query-page {
+  background: linear-gradient(rgba(244,245,239,.72), rgba(244,245,239,.84)), var(--wallpaper) center / cover fixed no-repeat;
+}
+.landing-page .nav, .query-page .nav {
+  background: rgba(255,255,255,.56);
+  border-color: rgba(255,255,255,.65);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  backdrop-filter: blur(24px) saturate(125%);
+  box-shadow: 1px 0 24px rgba(24,32,42,.04);
+}
+.nav-title { background: transparent; border-color: rgba(30,35,40,.09); }
+.landing-title { line-height: .88; text-shadow: 0 1px 0 #ffffff, 12px 12px 0 rgba(223, 255, 53, .52); }
+.landing-label { letter-spacing: .12em; font-size: 10px; }
+.landing-label::before { width: 10px; height: 10px; clip-path: none; }
+.landing-subtitle, .landing-actions .btn-cta,
+.page-header, .controls, .custom-range-bar, .day-block, .empty-msg {
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
+  backdrop-filter: blur(22px) saturate(125%);
+}
+.landing-subtitle { padding: 13px 18px; color: #303530; border-left: 3px solid var(--ef-accent); }
+.landing-actions .btn-cta {
+  min-width: 252px; padding: 17px 58px 17px 24px;
+  color: #151915; font-weight: 600; letter-spacing: .08em;
+  background: rgba(255,255,255,.62); transform: none;
+}
+.landing-actions .btn-cta::before { display: none; }
+.landing-actions .btn-cta::after {
+  content: '↗'; display: block; position: absolute; left: auto; right: 20px; top: 50%;
+  width: 27px; height: 27px; line-height: 27px; transform: translateY(-50%);
+  background: var(--ef-accent); color: #111; font-size: 18px; text-align: center;
+  border: 0; border-radius: 0;
+}
+.landing-actions .btn-cta:hover { background: rgba(255,255,255,.88); box-shadow: 0 10px 30px rgba(24,32,42,.12); }
+.controls select, .controls input[type="text"], .fav-toggle, .period-range {
+  background-color: rgba(255,255,255,.66); border-color: rgba(25,35,30,.14); border-radius: 0;
+}
+.day-block:hover { transform: none; box-shadow: var(--glass-shadow); }
+.day-header { background: transparent; }
+.query-band { background: rgba(255,255,255,.58); border-radius: 0; box-shadow: none; }
+.landing-footer { color: #59615b; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .landing-page .nav, .query-page .nav, .landing-subtitle, .landing-actions .btn-cta,
+  .page-header, .controls, .custom-range-bar, .day-block { background-color: rgba(255,255,255,.94); }
+}
+@media (max-width: 768px) {
+  :root { --wallpaper: url('../images/wallhaven-w5x2vr.jpg'); }
+  .landing-title { font-size: clamp(48px, 12vw, 76px); }
+  .landing-subtitle { font-size: 11px; }
+  .landing-main { padding-bottom: 80px; }
+}
+
+/* Keep the original angular industrial geometry with frosted surfaces. */
+.day-header, .table-wrap, .fav-star { border-radius: 0; }

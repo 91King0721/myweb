@@ -1,0 +1,192 @@
+/* Modern is the unchanged third preview. Only the switch is shared. */
+.theme-switch {
+  position: fixed; top: 24px; right: 28px; z-index: 100;
+  display: flex; align-items: center; gap: 4px; padding: 5px;
+  background: rgba(255,255,255,.86); border: 1px solid rgba(30,35,30,.18);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  color: #242824; font: 12px var(--ef-font-sans);
+}
+.theme-switch > span { padding: 0 12px; color: #555b53; }
+.theme-switch button {
+  min-height: 40px; min-width: 64px; padding: 8px 16px; border: 0; border-radius: 0;
+  background: transparent; color: inherit; font: inherit; cursor: pointer;
+}
+.theme-switch button[aria-pressed="true"] { background: #dfff35; color: #111; }
+.theme-switch button:hover { outline: 1px solid currentColor; outline-offset: -3px; }
+.theme-switch button:focus-visible { outline: 2px solid #111; outline-offset: 2px; }
+html[data-theme="retro"] {
+  --ef-accent: #cc785c; --ef-bg: #faf9f5; --ef-surface: #faf9f5;
+  --ef-surface-raised: #f5f0e8; --ef-border: #dcd3c5;
+  --ef-text-main: #2c2924; --ef-text-secondary: #686157;
+  --retro-serif: 'Songti SC', 'STSong', 'Noto Serif CJK SC', 'SimSun', Georgia, serif;
+}
+[data-theme="retro"] body { color: #2c2924; background-color: #faf9f5; }
+[data-theme="retro"] .landing-page::before {
+  background: linear-gradient(90deg, rgba(250,249,245,.72) 0%, rgba(250,249,245,.52) 34%, rgba(250,249,245,0) 62%),
+    var(--wallpaper) center / cover no-repeat;
+}
+[data-theme="retro"] .query-page {
+  background: linear-gradient(rgba(250,249,245,.82),rgba(250,249,245,.92)), var(--wallpaper) center / cover fixed no-repeat;
+}
+[data-theme="retro"] .nav {
+  background: #f5f0e8; border-color: #ddd5c8; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+[data-theme="retro"] .nav-title { color: #4c443a; font-family: Georgia, serif; font-weight: 400; }
+[data-theme="retro"] .nav-links a:hover, [data-theme="retro"] .nav-back:hover { background: #e8e0d2; border-color: #cc785c; }
+[data-theme="retro"] .landing-label { font-family: Georgia, var(--retro-serif); letter-spacing: .12em; color: #725b49; text-shadow: none; }
+[data-theme="retro"] .landing-label::before { background: #cc785c; }
+[data-theme="retro"] .landing-title {
+  font-family: var(--retro-serif); font-weight: 400; font-size: clamp(56px, 7vw, 104px);
+  letter-spacing: -.045em; line-height: 1.17; color: #302b25; text-shadow: none;
+}
+[data-theme="retro"] .landing-subtitle {
+  padding: 16px 0; background: transparent; border: 0; border-top: 1px solid #bcae9b;
+  font-family: var(--retro-serif); font-size: 15px; color: #615548;
+  box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+[data-theme="retro"] .landing-actions .btn-cta {
+  background: #cc785c; color: #211c18; border: 1px solid #b66a51;
+  box-shadow: none; font-family: var(--retro-serif); font-size: 16px; font-weight: 600;
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+[data-theme="retro"] .landing-actions .btn-cta:hover { background: #ba684e; color: #fff; box-shadow: none; }
+[data-theme="retro"] .landing-actions .btn-cta::after { background: transparent; color: inherit; }
+[data-theme="retro"] .theme-switch { background: #f5f0e8; border-color: #cfc5b7; backdrop-filter: none; -webkit-backdrop-filter: none; }
+[data-theme="retro"] .theme-switch button[aria-pressed="true"] { background: #e8e0d2; color: #4a3629; }
+[data-theme="retro"] .landing-footer { color: #786c5d; font-family: var(--retro-serif); }
+[data-theme="retro"] .page-header, [data-theme="retro"] .controls,
+[data-theme="retro"] .custom-range-bar, [data-theme="retro"] .day-block,
+[data-theme="retro"] .empty-msg {
+  background: #faf9f5; border: 1px solid #dcd3c5; box-shadow: none;
+  backdrop-filter: none; -webkit-backdrop-filter: none; clip-path: none;
+}
+[data-theme="retro"] .page-header::before, [data-theme="retro"] .page-header::after,
+[data-theme="retro"] .controls::before { display: none; }
+[data-theme="retro"] .page-title { font-family: var(--retro-serif); font-weight: 400; letter-spacing: -.035em; color: #302b25; }
+[data-theme="retro"] .page-title::before { color: #947762; font-family: Georgia, serif; }
+[data-theme="retro"] .page-subtitle, [data-theme="retro"] .day-title { font-family: var(--retro-serif); }
+[data-theme="retro"] .day-title { font-size: 19px; font-weight: 400; }
+[data-theme="retro"] .day-header:hover { background: #efe9de; }
+[data-theme="retro"] .controls select, [data-theme="retro"] .controls input[type="text"],
+[data-theme="retro"] .fav-toggle, [data-theme="retro"] .period-range { background-color: #f5f0e8; color: #3d3d3a; border-color: #dcd3c5; box-shadow: none; }
+[data-theme="retro"] th { background: #e8e0d2; color: #302b25; border-color: #d2c6b6; }
+[data-theme="retro"] td, [data-theme="retro"] td:first-child { border-color: #ddd5c8; }
+[data-theme="retro"] td:first-child { background: #f5f0e8; }
+[data-theme="retro"] td.free { background: #e3eadc; }
+[data-theme="retro"] td.occ { background: #ecd9cf; }
+[data-theme="retro"] .legend-dot.free { background: #779271; }
+[data-theme="retro"] .legend-dot.occ { background: #b77962; }
+[data-theme="retro"] .table-wrap { box-shadow: none; }
+[data-theme="retro"] :focus-visible { outline-color: #a9583e; box-shadow: 0 0 0 3px rgba(204,120,92,.18); }
+@media (max-width: 768px) {
+  .theme-switch { top: 76px; right: 16px; }
+  [data-theme="retro"] .landing-title { font-size: clamp(48px, 11.5vw, 76px); }
+  [data-theme="retro"] .landing-subtitle { font-size: 12px; }
+}
+
+/* Compact theme control, with a single persisted preference. */
+.theme-toggle {
+  position: fixed; z-index: 100; top: 20px; right: 24px; min-height: 32px;
+  padding: 5px 10px; font: 11px var(--ef-font-sans); letter-spacing: .05em;
+  color: #4c5149; background: rgba(255,255,255,.7); border: 1px solid rgba(60,65,55,.18);
+  border-radius: 0; cursor: pointer;
+}
+.theme-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.theme-toggle:hover { background: #fff; }
+.page-title::before { content: '↘ 教室信息'; }
+/* Retro is a separate layout and component language, not a recoloring. */
+[data-theme="retro"] .theme-toggle { top: 21px; right: 28px; border-radius: 20px; background: #efe9de; border-color: transparent; color: #746653; }
+[data-theme="retro"] .nav {
+  width: 100%; height: 74px; bottom: auto; border: 0; border-bottom: 1px solid #e6dfd8;
+  background: #faf9f5; padding: 0 48px;
+}
+[data-theme="retro"] .nav-inner { flex-direction: row; align-items: center; justify-content: space-between; max-width: 1240px; margin: auto; }
+[data-theme="retro"] .nav-title {
+  width: auto; max-width: none; min-height: auto; height: auto; padding: 0; border: 0;
+  font: 22px var(--retro-serif); letter-spacing: .1em; word-break: normal;
+}
+[data-theme="retro"] .nav-title::first-line { font-size: inherit; }
+[data-theme="retro"] .nav-links { width: auto; margin: 0 104px 0 auto; flex-direction: row; }
+[data-theme="retro"] .nav-links a, [data-theme="retro"] .nav-back {
+  width: auto; min-height: 40px; padding: 8px 14px; margin: 0; border: 0; border-radius: 22px;
+  color: #615548; font: 13px var(--ef-font-sans); order: 0;
+}
+[data-theme="retro"] .nav-back svg { width: 16px; height: 16px; color: currentColor; }
+[data-theme="retro"] .nav-links a::before { display: none; }
+[data-theme="retro"] .landing-main {
+  margin: 0; min-height: 100svh; padding: 156px max(7vw,28px) 104px;
+  justify-content: center; gap: 0;
+}
+[data-theme="retro"] .landing-page::before { inset: 74px 0 0; }
+[data-theme="retro"] .landing-label { padding: 0; margin-bottom: 24px; font: 14px var(--retro-serif); letter-spacing: .18em; }
+[data-theme="retro"] .landing-label::before { display: none; }
+[data-theme="retro"] .landing-title { font-size: clamp(54px,6.3vw,90px); line-height: 1.24; margin-bottom: 8px; }
+[data-theme="retro"] .landing-subtitle { line-height: 1.8; margin: 22px 0 28px; max-width: 420px; }
+[data-theme="retro"] .landing-actions .btn-cta {
+  min-width: 0; min-height: 50px; padding: 13px 26px; border: 0; border-radius: 26px;
+  font: 15px var(--ef-font-sans); letter-spacing: 0; background: #a9583e; color: #fff;
+  transition: background-color 180ms ease;
+}
+[data-theme="retro"] .landing-actions .btn-cta::after { display: none; }
+[data-theme="retro"] .landing-actions .btn-cta:hover { background: #904932; }
+[data-theme="retro"] .landing-footer { left: 0; right: 0; text-align: center; bottom: 24px; font: 12px var(--retro-serif); letter-spacing: .16em; }
+[data-theme="retro"] .main { max-width: 1120px; margin: 0 auto; padding: 126px 40px 64px; }
+[data-theme="retro"] .page-header { border: 0; background: transparent; padding: 0; margin-bottom: 24px; max-width: none; }
+[data-theme="retro"] .page-title { font-size: clamp(30px,4vw,46px); line-height: 1.3; }
+[data-theme="retro"] .page-title::before { content: '校园手记'; color: #9b755d; font: 13px var(--retro-serif); letter-spacing: .18em; margin-bottom: 14px; }
+[data-theme="retro"] .page-subtitle { font-size: 13px; line-height: 1.8; color: #756d62; }
+[data-theme="retro"] .controls { padding: 18px; border-radius: 16px; margin-top: 22px; }
+[data-theme="retro"] .controls select, [data-theme="retro"] .controls input[type="text"],
+[data-theme="retro"] .fav-toggle, [data-theme="retro"] .period-range { border-radius: 8px; min-height: 42px; }
+[data-theme="retro"] .fav-toggle.active { background: #e8d8cb; color: #71412e; }
+[data-theme="retro"] .custom-range-bar, [data-theme="retro"] .empty-msg { border-radius: 12px; }
+[data-theme="retro"] .day-block { border-radius: 16px; margin-bottom: 14px; overflow: hidden; }
+[data-theme="retro"] .day-header { border-radius: 15px; padding: 22px; transition: background-color 200ms ease; }
+[data-theme="retro"] .day-body { padding: 0 22px 22px; }
+[data-theme="retro"] .table-wrap { border-radius: 8px; }
+[data-theme="retro"] .free-mark { background: #607950; }
+[data-theme="retro"] .occ-mark { background: #a2634f; }
+[data-theme="retro"] .animate-in { animation: retro-arrive 700ms ease both; }
+[data-theme="retro"] .animate-in-delay-1 { animation-delay: 80ms; }
+[data-theme="retro"] .animate-in-delay-2 { animation-delay: 160ms; }
+[data-theme="retro"] .animate-in-delay-3 { animation-delay: 240ms; }
+[data-theme="retro"] .day-body { animation: retro-arrive 250ms ease both; }
+@keyframes retro-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width:768px) {
+  .theme-toggle { top: 74px; right: 16px; }
+  [data-theme="retro"] .nav { height: 68px; padding: 0 20px; }
+  [data-theme="retro"] .nav-title { font-size: 19px; }
+  [data-theme="retro"] .nav-links { margin-right: 68px; }
+  [data-theme="retro"] .nav-links a { font-size: 12px; padding: 6px 8px; }
+  [data-theme="retro"] .theme-toggle { top: 19px; right: 12px; }
+  [data-theme="retro"] .landing-page::before { inset: 68px 0 0; background-position: center; }
+  [data-theme="retro"] .landing-main { padding: 154px 26px 96px; justify-content: center; }
+  [data-theme="retro"] .landing-label { font-size: 11px; letter-spacing: .1em; }
+  [data-theme="retro"] .landing-title { font-size: clamp(44px,12vw,70px); }
+  [data-theme="retro"] .landing-actions { width: auto; }
+  [data-theme="retro"] .main { padding: 104px 18px 48px; }
+  [data-theme="retro"] .controls { padding: 12px; }
+  [data-theme="retro"] .day-header { padding: 18px; }
+  [data-theme="retro"] .day-body { padding: 0 12px 12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  [data-theme="retro"] .animate-in, [data-theme="retro"] .day-body { animation: none; }
+}
+
+[data-theme="retro"] .landing-label { font-family: Georgia, 'Times New Roman', serif; text-transform: none; letter-spacing: .055em; }
+
+/* Both home styles are free of navigation chrome. */
+.landing-page .landing-main { margin-left: 0; }
+.landing-page::before, [data-theme="retro"] .landing-page::before { inset: 0; }
+.landing-page .landing-footer { left: 0; }
+@media (max-width: 768px) {
+  .landing-page .theme-toggle { top: 20px; }
+}
+
+/* One shared wallpaper layer prevents theme-specific overlay drift. */
+html[data-theme] .landing-page::before {
+  background: linear-gradient(90deg, rgba(250,249,245,.72) 0%, rgba(250,249,245,.52) 34%, rgba(250,249,245,0) 62%),
+    var(--wallpaper) center / cover no-repeat;
+  opacity: 1; filter: none;
+}

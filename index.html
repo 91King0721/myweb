@@ -2,33 +2,26 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <script src="assets/js/theme.js?v=20260916-themes-final"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <title>整学期空闲教室查询</title>
   <link rel="stylesheet" href="assets/css/style.css?v=20260914-classroom-only">
-  <link rel="preload" as="image" href="assets/images/industrial-desktop.webp" type="image/webp" media="(min-width: 769px)">
-  <link rel="preload" as="image" href="assets/images/industrial-mobile.webp" type="image/webp" media="(max-width: 768px)">
+
+
   <link rel="prefetch" as="document" href="query.html">
   <link rel="prefetch" as="script" href="assets/js/data.js?v=20260916-computing-center">
   <link rel="prefetch" as="script" href="assets/js/app.js?v=20260916-computing-center">
+  <link rel="stylesheet" href="assets/css/frosted.css?v=20260916-shared-overlay">
+  <link rel="stylesheet" href="assets/css/themes.css?v=20260916-shared-overlay">
 </head>
 <body class="landing-page">
   <!-- 工业风格装饰 -->
-  <div class="grid-lines"></div>
 
-  <!-- 导航栏 -->
-  <nav class="nav">
-    <div class="nav-inner">
-      <a href="index.html" class="nav-title">CLASSROOM_SCAN</a>
-      <ul class="nav-links">
-        <li style="display:none"><a href="#">个人主页</a></li>
-        <li><a href="query.html">// 查询教室</a></li>
-      </ul>
-    </div>
-  </nav>
+  <button type="button" class="theme-toggle" aria-label="切换为复古风格" title="切换为复古风格">复古 ↔</button>
 
   <!-- 主内容 -->
   <main class="landing-main">
-    <div class="landing-label animate-in">MODERN INDUSTRIAL / TERMINAL UI</div>
+    <div class="landing-label animate-in">CLASSROOM AVAILABILITY FINDER</div>
 
     <h1 class="landing-title animate-in animate-in-delay-1">
       空闲教室<br>查询系统
@@ -44,18 +37,11 @@
       </a>
 
     </div>
-
-    <div class="landing-download-panel animate-in animate-in-delay-3">
-      <span class="panel-flag">SCAN</span>
-      <span>WEEK 01-18</span>
-      <span>7 栋教学楼 · 108 间教室</span>
-      <span>周一至周日 · 每日 12 节</span>
-    </div>
   </main>
 
   <footer class="landing-footer">
-    <p>// CLASSROOM_SCAN v0.2 — 整学期教室课表查询终端</p>
+    <p>教室查询 · 整学期课表</p>
   </footer>
-  <script src="assets/js/transitions.js?v=20260916-computing-center"></script>
+  <script src="assets/js/transitions.js?v=20260916-themes-final"></script>
 </body>
 </html>

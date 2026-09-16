@@ -2,14 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <script src="assets/js/theme.js?v=20260916-themes-final"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-  <title>// QUERY_TERMINAL - 空闲教室查询</title>
+  <title>空闲教室查询</title>
   <link rel="stylesheet" href="assets/css/style.css?v=20260914-classroom-only">
-  <link rel="preload" as="image" href="assets/images/industrial-desktop.webp" type="image/webp" media="(min-width: 769px)">
-  <link rel="preload" as="image" href="assets/images/industrial-mobile.webp" type="image/webp" media="(max-width: 768px)">
+
+
   <link rel="preload" as="script" href="assets/js/data.js?v=20260916-computing-center">
   <link rel="preload" as="script" href="assets/js/app.js?v=20260916-computing-center">
   <link rel="prefetch" as="document" href="index.html">
+  <link rel="stylesheet" href="assets/css/frosted.css?v=20260916-shared-overlay">
+  <link rel="stylesheet" href="assets/css/themes.css?v=20260916-shared-overlay">
 </head>
 <body class="query-page">
   <!-- 导航栏 -->
@@ -19,27 +22,21 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M15 18l-6-6 6-6"/>
         </svg>
-        &lt; RETURN
+        返回
       </a>
-      <span class="nav-title">QUERY_TERMINAL</span>
       <ul class="nav-links">
         <li style="display:none"><a href="#">个人主页</a></li>
-        <li><a href="index.html">// 首页</a></li>
+        <li><a href="index.html">首页</a></li>
       </ul>
     </div>
   </nav>
 
   <main class="main">
-    <div class="query-band">
-      <span>MODERN INDUSTRIAL</span>
-      <strong>CLASSROOM_SCAN</strong>
-      <span>TERMINAL</span>
-    </div>
 
     <!-- 页面标题 -->
     <div class="page-header">
       <h1 class="page-title">教室课表查询终端</h1>
-      <p class="page-subtitle">// 东校区 · WEEK 01 ~ 18 · 周一至周日</p>
+      <p class="page-subtitle">东校区 · 第 1—18 周 · 周一至周日</p>
     </div>
 
     <p id="dataStatus" class="page-subtitle" role="status"></p>
@@ -142,7 +139,7 @@
     <div id="results"></div>
   </main>
 
-  <script src="assets/js/transitions.js?v=20260916-computing-center"></script>
+  <script src="assets/js/transitions.js?v=20260916-themes-final"></script>
   <script src="assets/js/data.js?v=20260916-computing-center"></script>
   <script src="assets/js/app.js?v=20260916-computing-center"></script>
 </body>
