@@ -1,7 +1,10 @@
 (() => {
   const key = 'classroom-style-preview';
-  let theme = 'modern';
-  try { if (localStorage.getItem(key) === 'retro') theme = 'retro'; } catch (_) {}
+  let theme = 'retro';
+  try {
+    const savedTheme = localStorage.getItem(key);
+    if (savedTheme === 'modern' || savedTheme === 'retro') theme = savedTheme;
+  } catch (_) {}
   document.documentElement.dataset.theme = theme;
   const text = (selector, value) => { const el = document.querySelector(selector); if (el) el.textContent = value; };
   function apply(value, animate) {
