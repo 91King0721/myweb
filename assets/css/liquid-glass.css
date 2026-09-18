@@ -1,0 +1,60 @@
+/* Liquid glass theme. Glass contours and the circular inversion hover are
+   adapted for this site from the local yzrt-master component studies. */
+html[data-theme="glass"]{--ef-accent:#526d63;--ef-text-main:#223b36;--ef-text-secondary:#52675f;--ef-border:#d1ded7;--ef-surface:#f2f7f4;--ef-bg:#eaf1ed;--liquid-shadow:inset 1px 2px 2px #ffffffed,inset -1px -2px 3px #ffffffa8,0 8px 28px #25493912}
+[data-theme="glass"] body{color:#223b36;background-color:#eaf1ed}
+html[data-theme="glass"] .landing-page::before{background:linear-gradient(90deg,#edf7f2ba,#eef5ef38 65%),var(--wallpaper) center/cover no-repeat}
+[data-theme="glass"] .query-page{background:linear-gradient(#eaf4ecb5,#f3f7f1de),var(--wallpaper) center/cover fixed no-repeat}
+[data-theme="glass"] .landing-main{min-height:100svh;padding:140px max(7vw,28px) 110px;justify-content:center;gap:0}
+[data-theme="glass"] .landing-label{padding:0;margin-bottom:26px;font-size:11px;letter-spacing:.2em;color:#355e50;text-shadow:none}
+[data-theme="glass"] .landing-label::before{border-radius:50%;background:#688f78;box-shadow:0 0 0 5px #ffffff54}
+[data-theme="glass"] .landing-title{font-size:clamp(56px,7vw,100px);font-weight:550;letter-spacing:-.055em;line-height:1.14;color:#243e34;text-shadow:0 2px 1px #ffffffa8}
+[data-theme="glass"] .landing-subtitle{display:inline-block;align-self:flex-start;margin:30px 0;padding:13px 20px;max-width:100%;border:1px solid #ffffffc7;border-radius:30px;background:#ffffff59;color:#3a554a;box-shadow:var(--liquid-shadow);font-size:13px}
+html[data-theme="glass"] .landing-actions .btn-cta{min-width:260px;min-height:72px;padding:18px 84px 18px 30px;border-radius:40px;clip-path:none;border:1px solid #ffffffd9;background:linear-gradient(145deg,#ffffff9e,#ffffff30);color:#223b36;font-size:16px;letter-spacing:.02em;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--liquid-shadow);transition:transform .25s,box-shadow .25s,background .25s}
+html[data-theme="glass"] .landing-actions .btn-cta::after{content:'→';display:grid;place-items:center;position:absolute;top:50%;right:12px;width:48px;height:48px;border-radius:50%;background:#203d32;color:#fff;font-size:25px;box-shadow:0 3px 7px #14312233;transition:transform .25s}
+html[data-theme="glass"] .landing-actions .btn-cta:hover{background:#ffffff9c;transform:translateY(-3px);box-shadow:inset 2px 3px 3px white,inset -2px -3px 4px #ffffffaa,0 15px 32px #24483924}
+html[data-theme="glass"] .landing-actions .btn-cta:hover::after{transform:translateY(-50%) rotate(-35deg)}
+html[data-theme="glass"] .landing-actions .btn-cta:active{transform:translateY(1px)}
+[data-theme="glass"] .landing-footer{left:0;right:0;text-align:center;color:#4e665b}
+[data-theme="glass"] .nav{width:calc(100% - 48px);height:64px;top:16px;left:24px;bottom:auto;border:1px solid #ffffffce;border-radius:36px;padding:0 22px;background:#ffffff6b;box-shadow:var(--liquid-shadow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+[data-theme="glass"] .nav-inner{max-width:1180px;margin:auto;flex-direction:row;justify-content:space-between;align-items:center}
+[data-theme="glass"] .nav-links{width:auto;margin:0 130px 0 auto;flex-direction:row}
+[data-theme="glass"] .nav-links a,[data-theme="glass"] .nav-back{width:auto;min-height:38px;padding:8px 16px;margin:0;border:0;border-radius:22px;color:#294c3f;order:0;font-size:13px}
+[data-theme="glass"] .nav-links a::before{display:none}
+[data-theme="glass"] .nav-back svg{width:16px;height:16px;color:currentColor}
+[data-theme="glass"] .nav-links a:hover,[data-theme="glass"] .nav-back:hover{background:#ffffff9c}
+[data-theme="glass"] .theme-toggle{top:31px;right:44px;border-radius:22px;border:1px solid #ffffffbe;background:#ffffff70;box-shadow:inset 0 1px 2px white;color:#294c3f;min-height:34px;padding:7px 13px}
+[data-theme="glass"] .landing-page .theme-toggle{top:24px;right:28px}
+[data-theme="glass"] .main{max-width:1180px;margin:0 auto;padding:128px 36px 64px}
+[data-theme="glass"] .page-header{padding:0;margin-bottom:18px;background:transparent;border:0;box-shadow:none;backdrop-filter:none;clip-path:none}
+[data-theme="glass"] .page-header::before,[data-theme="glass"] .page-header::after,[data-theme="glass"] .controls::before{display:none}
+[data-theme="glass"] .page-title{font-size:clamp(28px,3.7vw,44px);font-weight:500;letter-spacing:-.045em;color:#244337;line-height:1.35}
+[data-theme="glass"] .page-title::before{content:'SPACE TO FOCUS';font-size:10px;letter-spacing:.2em;color:#587867;margin-bottom:14px}
+[data-theme="glass"] .page-subtitle{color:#546e60;font-size:12px;line-height:1.8}
+[data-theme="glass"] .controls,[data-theme="glass"] .custom-range-bar,[data-theme="glass"] .day-block,[data-theme="glass"] .empty-msg{border:1px solid #ffffffd6;border-radius:22px;background:#ffffff70;clip-path:none;box-shadow:var(--liquid-shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+[data-theme="glass"] .controls{padding:18px;margin-top:24px;gap:12px}
+[data-theme="glass"] .controls select,[data-theme="glass"] .controls input[type="text"],[data-theme="glass"] .period-range{min-height:44px;border:1px solid #ffffffcf;border-radius:12px;background-color:#ffffff96;color:#29493d;box-shadow:inset 0 1px 2px #fff;clip-path:none}
+[data-theme="glass"] .controls input:focus{outline:2px solid #678b76;outline-offset:2px}
+/* Go Pro study: an expanding circular inversion, reused for the favorites action. */
+[data-theme="glass"] .fav-toggle{position:relative;isolation:isolate;overflow:hidden;min-height:44px;border:0;border-radius:12px;background:#203d32;color:#fff;box-shadow:0 5px 12px #203d322b;clip-path:none;transition:transform .2s}
+[data-theme="glass"] .fav-toggle::before{content:'';position:absolute;z-index:2;width:220px;height:220px;left:50%;top:50%;border-radius:50%;background:white;mix-blend-mode:difference;transform:translate(-155%,10%);transition:transform .4s,border-radius .4s;pointer-events:none}
+[data-theme="glass"] .fav-toggle:hover::before,[data-theme="glass"] .fav-toggle:focus-visible::before{transform:translate(-50%,-50%);border-radius:0}
+[data-theme="glass"] .fav-toggle:active{transform:translateY(3px)}
+[data-theme="glass"] .fav-toggle.active{background:#d8e8bb;color:#203d32;box-shadow:inset 0 0 0 2px #63835f}
+[data-theme="glass"] .fav-toggle.active svg{fill:currentColor}
+[data-theme="glass"] .day-block{margin-bottom:14px;overflow:hidden}
+[data-theme="glass"] .day-header{padding:20px 24px;border-radius:22px;background:transparent}
+[data-theme="glass"] .day-header:hover{background:#ffffff6e}
+[data-theme="glass"] .day-title{font-size:17px;font-weight:500;color:#29493d}
+[data-theme="glass"] .free-num{color:#345e45}
+[data-theme="glass"] .table-wrap{box-shadow:none;border-radius:0 0 18px 18px}
+[data-theme="glass"] th{background:#e0ebe3;color:#29493d;border-color:#cfdfd4}
+[data-theme="glass"] td,[data-theme="glass"] td:first-child{border-color:#d2dfd6}
+[data-theme="glass"] td:first-child{background:#f0f5ef}
+[data-theme="glass"] td.free{background:#e0efdd}
+[data-theme="glass"] td.occ{background:#efdfd4}
+[data-theme="glass"] .legend-dot.free{background:#71946c}
+[data-theme="glass"] .legend-dot.occ{background:#b68d73}
+[data-theme="glass"] :focus-visible{outline:2px solid #456c56;outline-offset:3px}
+@media(max-width:768px){[data-theme="glass"] .nav{left:12px;top:12px;width:calc(100% - 24px);height:56px;padding:0 10px}[data-theme="glass"] .theme-toggle{top:23px;right:24px}[data-theme="glass"] .nav-links{margin-right:112px}[data-theme="glass"] .main{padding:104px 16px 36px}[data-theme="glass"] .landing-main{padding:120px 26px 100px}[data-theme="glass"] .landing-title{font-size:clamp(52px,12vw,76px)}[data-theme="glass"] .landing-subtitle{font-size:11px;padding:12px 14px}[data-theme="glass"] .controls{padding:14px;gap:10px}[data-theme="glass"] .controls input[type="text"]{min-width:0}[data-theme="glass"] .day-header{padding:17px 14px}}
+@media(prefers-reduced-motion:reduce){html[data-theme="glass"] .landing-actions .btn-cta,html[data-theme="glass"] .landing-actions .btn-cta::after,[data-theme="glass"] .fav-toggle,[data-theme="glass"] .fav-toggle::before{transition:none}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){[data-theme="glass"] .controls,[data-theme="glass"] .day-block,[data-theme="glass"] .nav{background:#f2f7f2}}

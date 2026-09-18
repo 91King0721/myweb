@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="glass">
 <head>
   <meta charset="UTF-8">
-  <script src="assets/js/theme.js?v=20260916-retro-default"></script>
+  <script src="assets/js/theme.js?v=20260918-glass-default-v1"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
   <title>空闲教室查询</title>
-  <link rel="stylesheet" href="assets/css/style.css?v=20260914-classroom-only">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260918-glass-default-v1">
 
 
-  <link rel="preload" as="script" href="assets/js/data.js?v=20260916-computing-center">
-  <link rel="preload" as="script" href="assets/js/app.js?v=20260916-computing-center">
+  <link rel="preload" as="script" href="assets/js/data.js?v=20260918-glass-default-v1">
+  <link rel="preload" as="script" href="assets/js/app.js?v=20260918-glass-default-v1">
   <link rel="prefetch" as="document" href="index.html">
-  <link rel="stylesheet" href="assets/css/frosted.css?v=20260916-shared-overlay">
-  <link rel="stylesheet" href="assets/css/themes.css?v=20260916-shared-overlay">
+  <link rel="stylesheet" href="assets/css/frosted.css?v=20260918-glass-default-v1">
+  <link rel="stylesheet" href="assets/css/themes.css?v=20260918-glass-default-v1">
+  <link rel="stylesheet" href="assets/css/liquid-glass.css?v=20260918-glass-default-v1">
 </head>
 <body class="query-page">
   <!-- 导航栏 -->
@@ -56,7 +57,7 @@
 
     <!-- 控制栏 -->
     <div class="controls">
-      <select id="weekSel" onchange="render()">
+      <select aria-label="周次" id="weekSel" onchange="render()">
         <option value="1">第 1 周</option>
         <option value="2">第 2 周</option>
         <option value="3">第 3 周</option>
@@ -77,14 +78,14 @@
         <option value="18">第 18 周</option>
       </select>
 
-      <select id="bldSel" onchange="render()">
+      <select aria-label="教学楼" id="bldSel" onchange="render()">
         <option value="一教">一教</option>
         <option value="二教">二教</option>
         <option value="三教">三教</option>
         <option value="东区主楼">东区主楼</option>
       </select>
 
-      <select id="periodSel" onchange="onPeriodChange()">
+      <select aria-label="时段" id="periodSel" onchange="onPeriodChange()">
         <option value="all">全部时段</option>
         <option value="1-4">1-4节(上午)</option>
         <option value="5-8">5-8节(下午)</option>
@@ -92,7 +93,7 @@
         <option value="custom">自定义时段</option>
       </select>
 
-      <input id="searchInput" type="text" inputmode="search" placeholder="搜教室编号..." autocomplete="off" oninput="render()">
+      <input id="searchInput" type="text" inputmode="search" aria-label="搜索教室编号" placeholder="搜教室编号..." autocomplete="off" oninput="render()">
 
       <button type="button" id="favToggle" class="fav-toggle" onclick="toggleFavFilter()" title="筛选收藏">
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
@@ -139,8 +140,8 @@
     <div id="results"></div>
   </main>
 
-  <script src="assets/js/transitions.js?v=20260916-themes-final"></script>
-  <script src="assets/js/data.js?v=20260916-computing-center"></script>
-  <script src="assets/js/app.js?v=20260916-computing-center"></script>
+  <script src="assets/js/transitions.js?v=20260918-glass-default-v1"></script>
+  <script src="assets/js/data.js?v=20260918-glass-default-v1"></script>
+  <script src="assets/js/app.js?v=20260918-glass-default-v1"></script>
 </body>
 </html>
